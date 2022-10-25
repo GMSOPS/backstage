@@ -1,12 +1,12 @@
 apiVersion: scaffolder.backstage.io/v1beta3
 kind: Template
 metadata:
-  name: python-template
-  title: Python Service
-  description: Create a Python Application
+  name: nodejs-template
+  title: Nodejs Service
+  description: Create a Nodejs Hello World Application
 
   tags:
-    - python
+    - nodejs
     - recommended
     - service
     - component
@@ -52,9 +52,7 @@ spec:
       name: Fetch Skeleton + Template
       action: fetch:template
       input:
-        url: https://github.com/diegoluisi/devspace-python
-        #copyWithoutRender:
-        #  - .github/workflows/*
+        url: https://github.com/GMSOPS/NestJSApp
         values:
           component_id: ${{ parameters.component_id }}
           description: ${{ parameters.description }}
