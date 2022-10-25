@@ -3,11 +3,15 @@ kind: API
 metadata:
   name: backstage
   description: Backstage IDP Portal
-
+  links:
+    - url: https://dashboard.example.com
+      title: My Dashboard
+      icon: dashboard
   annotations:
     github.com/project-slug: GMSOPS/backstage
     backstage.io/techdocs-ref: value
     backstage.io/kubernetes-namespace: backstage
+    
 spec:
   type: openapi
   lifecycle: production
