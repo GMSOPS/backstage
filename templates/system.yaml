@@ -1,0 +1,118 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: system-template
+  title: Create New System
+  description: Create a System from  template
+  tags:
+    - system
+spec:
+  owner: group:sre-team
+  type: system
+
+  parameters:
+    - title: Provide System simple information
+      required:
+        - system
+        - description
+        - owner
+        - domain
+        - lifecycle
+      properties:
+        system:
+          title: Name
+          type: string
+          description: Unique name of the System
+          ui:field: EntityNamePicker
+          ui:autofocus: true
+
+        description:
+          title: Description
+          type: string
+          description: Help others understand what this website is for.
+
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKinds:
+              - Group
+
+        domain:
+          title: Domain
+          type: string
+          description: Domain of the System
+          ui:field: EntityPicker
+          ui:options:
+            allowedKinds:
+              - Domain
+            defaultKind: Domain
+
+        lifecycle:
+          title: Lifecycle
+          description: 'Application lifecycle'
+          type: string
+          default: experimental
+          enum:
+            - deprecated
+            - experimental
+            - production
+
+        dryRun:
+          title: Only perform a dry run, don't publish anything
+          type: boolean
+          default: false
+
+  steps:
+    - id: fetch-template
+      name: Fetch System Templates
+      action: fetch:template
+      if: ${{ parameters.dryRun == false }}
+      input:
+        targetPath: ./system
+        url: https://github.com/devxp-tech/backstage-catalog/tree/main/devxp/skeleton/system
+        values:
+          system: ${{ parameters.system }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          domain: ${{ parameters.domain }}
+          lifecycle: ${{ parameters.lifecycle }}
+
+    - id: open-pr
+      name: "Open PR on Backstage Catalog"
+      action: publish:github:pull-request
+      if: ${{ parameters.dryRun == false }}
+      input:
+        repoUrl: github.com?repo=backstage-catalog&owner=devxp-tech
+        branchName: create-${{ parameters.system }}
+        title: ':robot: [backstage-bot] Create ${{ parameters.system }}'
+        description: |
+          # New project: ${{ parameters.system }}
+          ${{ parameters.description if parameters.description }}
+        sourcePath: system
+        targetPath: devxp/systems
+
+    # - id: register
+    #   name: Register Application in Catalog
+    #   action: catalog:register
+    #   if: ${{ parameters.dryRun !== true }}
+    #   input:
+    #     repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+    #     catalogInfoPath: "/catalog-info.yaml"
+
+
+    - name: Results
+      if: ${{ parameters.dryRun }}
+      action: debug:log
+      input:
+        listWorkspace: true
+
+  output:
+    links:
+      - title: Go to GitOps Pull Request
+        url: ${{ steps.open-pr.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

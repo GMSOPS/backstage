@@ -8,8 +8,8 @@ metadata:
 spec:
   owner: group:engineering
   targets:
-    - ./all-apis.yaml
-#    - ./all-components.yaml
+#    - ./all-apis.yaml
+    - ./all-components.yaml
 #    - ./all-domais.yaml
 #    - ./all-groups.yaml
 #    - ./all-resources.yaml
