@@ -5,6 +5,6 @@ metadata:
   name: all-domains
   description: A collection of all Backstage example domains
 spec:
-  # owner: group:engineering
+  owner: group:engineering
   targets:
     - ./domains/*.yaml
