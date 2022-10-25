@@ -1,0 +1,11 @@
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: all-groups
+  description: A collection of all Backstage example Groups
+
+spec:
+  owner: group:engineering
+  targets:
+    - ./groups/org.yaml

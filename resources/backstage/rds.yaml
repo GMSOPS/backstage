@@ -1,0 +1,14 @@
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: backstage-db
+  description: Stores Backstage Information
+  tags:
+    - database
+    - postgres
+    - rds
+spec:
+  type: database
+  owner: group:dba-team
+  system: backstage
+  lifecycle: production

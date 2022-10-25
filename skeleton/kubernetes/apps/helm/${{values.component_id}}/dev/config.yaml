@@ -1,0 +1,19 @@
+appName: ${{values.component_id}}
+userGivenName: ${{values.component_id}}
+destNamespace: ${{values.component_id}}
+destServer: https://kubernetes.default.svc
+srcPath: ''
+repoURL: https://devxp-tech.github.io/helm-charts
+srcRepoURL: https://devxp-tech.github.io/helm-charts
+srcTargetRevision: '0.1.3'
+labels:
+exclude: ''
+include: ''
+helm:
+  chart: web-application
+  valueFiles: values
+  values: |-
+      fullnameOverride: ${{values.component_id}}
+      image:
+        repository: diegoluisi/${{values.component_id}}
+        tag: latest
