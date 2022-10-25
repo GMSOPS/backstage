@@ -5,7 +5,7 @@ metadata:
   description: Backstage IDP Portal
 
   annotations:
-    github.com/project-slug: diegoluisi/backstage
+    github.com/project-slug: GMSOPS/backstage
     backstage.io/techdocs-ref: value
     backstage.io/kubernetes-namespace: backstage
 spec:
@@ -23,7 +23,7 @@ spec:
       license:
         name: MIT
     servers:
-      - url: https://backstage.diegoluisi.eti.br/
+      - url: https://backstage.local:3000/
     paths:
       /artists:
         get:
