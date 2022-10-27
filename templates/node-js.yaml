@@ -69,7 +69,8 @@ spec:
           kind: Component
           metadata:
             name: ${{ parameters.component_id }}
-            annotations: {}
+            annotations:
+              backstage.io/techdocs-ref: ${{ parameters.repoUrl }}/README.md
           spec:
             type: service
             lifecycle: production
