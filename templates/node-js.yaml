@@ -60,20 +60,20 @@ spec:
           owner: ${{ parameters.owner }}
 
 
-    # - id: create-catalog-info-file
-    #   action: catalog:write   
-    #   name: Create catalog file
-    #   input:
-    #     entity:
-    #       apiVersion: backstage.io/v1alpha1
-    #       kind: Component
-    #       metadata:
-    #         name: ${{ parameters.component_id }}
-    #         annotations: {}
-    #       spec:
-    #         type: service
-    #         lifecycle: production
-    #         owner: ${{ parameters.owner }}
+    - id: create-catalog-info-file
+      action: catalog:write   
+      name: Create catalog file
+      input:
+        entity:
+          apiVersion: backstage.io/v1alpha1
+          kind: Component
+          metadata:
+            name: ${{ parameters.component_id }}
+            annotations: {}
+          spec:
+            type: service
+            lifecycle: production
+            owner: ${{ parameters.owner }}
 
     - id: publish
       name: Publish
@@ -84,13 +84,13 @@ spec:
         description: This is ${{ parameters.component_id }}
         repoUrl: ${{ parameters.repoUrl }}
 
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        #catalogInfoPath: "/catalog-info.yaml"
-        #optional: true
+    # - id: register
+    #   name: Register
+    #   action: catalog:register
+    #   input:
+    #     repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+    #     #catalogInfoPath: "/catalog-info.yaml"
+    #     #optional: true
 
   output:
     links:
