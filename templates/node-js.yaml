@@ -70,7 +70,7 @@ spec:
           metadata:
             name: ${{ parameters.component_id }}
             annotations: {}
-            #  backstage.io/techdocs-ref: ${{ parameters.repoUrl }}/README.md
+              backstage.io/techdocs-ref: ${{ { steps.publish.output.repoContentsUrl }}/README.md
           spec:
             type: service
             lifecycle: production
