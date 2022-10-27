@@ -60,7 +60,7 @@ spec:
           owner: ${{ parameters.owner }}
 
 
-    - id: create-catalog-info-file
+    - id: create-catalog
       action: catalog:write   
       name: Create catalog file
       input:
@@ -85,13 +85,13 @@ spec:
         description: This is ${{ parameters.component_id }}
         repoUrl: ${{ parameters.repoUrl }}
 
-    # - id: register
-    #   name: Register
-    #   action: catalog:register
-    #   input:
-    #     repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-    #     #catalogInfoPath: "/catalog-info.yaml"
-    #     #optional: true
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        #catalogInfoPath: "/catalog-info.yaml"
+        optional: false
 
   output:
     links:
