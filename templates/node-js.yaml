@@ -69,8 +69,13 @@ spec:
           kind: Component
           metadata:
             name: ${{ parameters.component_id }}
-            annotations: 
-              backstage.io/techdocs-ref: ${{ { steps.publish.output.repoContentsUrl }}/README.md
+            annotations: {}
+            #   backstage.io/techdocs-ref: ${{ { steps.publish.output.repoContentsUrl }}/README.md
+            # links:
+            #   - url: https://admin.example-org.com
+            #     title: Staging url
+            #     icon: dashboard
+            #     type: admin-dashboard
           spec:
             type: service
             lifecycle: production
