@@ -97,6 +97,17 @@ spec:
         repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         #catalogInfoPath: "/catalog-info.yaml"
         optional: false
+    
+    - id: http-request
+      action: http:backstage:request
+      name: Create a thing on the acme service
+      input:
+        method: POST
+        path: "/api/proxy/proba"
+      headers:
+        'Content-Type': 'application/json'
+      body:
+        thingname: 'foo'
 
   output:
     links:
