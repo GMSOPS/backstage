@@ -98,8 +98,8 @@ spec:
         #catalogInfoPath: "/catalog-info.yaml"
         optional: false
     
-    - id: http-request
-      action: http:backstage:request
+    - action: http:backstage:request
+      id: http-request
       name: Create a thing on the acme service
       input:
         method: POST
