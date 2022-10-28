@@ -104,10 +104,10 @@ spec:
       input:
         method: POST
         path: "/api/proxy/proba"
-      headers:
-        'Content-Type': 'application/json'
-      body:
-        thingname: 'foo'
+        headers:
+          'Content-Type': 'application/json'
+        body:
+          thingname: 'foo'
 
   output:
     links:
