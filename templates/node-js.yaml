@@ -60,26 +60,26 @@ spec:
           owner: ${{ parameters.owner }}
 
 
-    - id: create-catalog
-      action: catalog:write   
-      name: Create catalog file
-      input:
-        entity:
-          apiVersion: backstage.io/v1alpha1
-          kind: Component
-          metadata:
-            name: ${{ parameters.component_id }}
-            annotations: {}
-            #   backstage.io/techdocs-ref: ${{ { steps.publish.output.repoContentsUrl }}/README.md
-            # links:
-            #   - url: https://admin.example-org.com
-            #     title: Staging url
-            #     icon: dashboard
-            #     type: admin-dashboard
-          spec:
-            type: service
-            lifecycle: production
-            owner: ${{ parameters.owner }}
+#    - id: create-catalog
+#      action: catalog:write   
+#      name: Create catalog file
+#      input:
+#        entity:
+#          apiVersion: backstage.io/v1alpha1
+#          kind: Component
+#          metadata:
+#            name: ${{ parameters.component_id }}
+#            annotations: {}
+#            #   backstage.io/techdocs-ref: ${{ { steps.publish.output.repoContentsUrl }}/README.md
+#            # links:
+#            #   - url: https://admin.example-org.com
+#            #     title: Staging url
+#            #     icon: dashboard
+#            #     type: admin-dashboard
+#          spec:
+#            type: service
+#            lifecycle: production
+#            owner: ${{ parameters.owner }}
 
     - id: publish
       name: Publish
