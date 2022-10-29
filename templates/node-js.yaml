@@ -103,7 +103,7 @@ spec:
       name: Create a thing on the acme service
       input:
         method: POST
-        path: "/api/proxy/proba"
+        path: "/proxy/test/662beb90-f4ee-4cc2-ac3d-3ed0cf9feb39"
         headers:
           'Content-Type': 'application/json'
         body:
