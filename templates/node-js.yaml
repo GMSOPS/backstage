@@ -88,7 +88,7 @@ spec:
       action: fetch:template
       input:
         url: ../skeleton/nest-app
-        targetPath: /tmp/app
+        targetPath: ./app
         values:
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
@@ -123,7 +123,7 @@ spec:
       input:
         allowedHosts:
           - github.com
-        sourcePath: /tmp/app
+        sourcePath: ./app
         description: This is ${{ parameters.component_id }}
         repoUrl: ${{ parameters.repoUrl }}
         defaultBranch: main
@@ -152,7 +152,7 @@ spec:
       action: fetch:template
       input:
         url: ../skeleton/infrastructure
-        targetPath: /tmp/infra
+        targetPath: ./infra
         values:
           git-owner: ${{ parameters.git-owner }}
           app: ${{ parameters.app }}
@@ -168,7 +168,7 @@ spec:
       name: Publish
       action: publish:github
       input:
-        sourcePath: /tmp/infra
+        sourcePath: ./infra
         allowedHosts:
           - github.com
         description: This is ${{ parameters.component_id }}-infrastructure
