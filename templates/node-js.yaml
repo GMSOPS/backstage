@@ -20,9 +20,10 @@ spec:
         - owner
         - app
         - port
-        - host-development
-        - host-staging
-        - host-production
+        - gitOwner
+        - hostDevelopment
+        - hostStaging
+        - hostProduction
       properties:
         component_id:
           title: Name
