@@ -18,12 +18,27 @@ spec:
       required:
         - component_id
         - owner
+        - app
+        - port
+        - registry
       properties:
         component_id:
           title: Name
           type: string
           description: Unique name of the component
           ui:field: EntityNamePicker
+        app:
+          title: Application Name
+          type: string
+          description: Unique name of the application
+        port:
+          title: Name
+          type: number
+          description: The port app listens on
+        registry:
+          title: Registry
+          type: string
+          description: Hostname of the registry of the app image
         description:
           title: Description
           type: string
@@ -52,12 +67,15 @@ spec:
       name: Fetch Skeleton + Template
       action: fetch:template
       input:
-        url: https://github.com/GMSOPS/NestJSApp
+        url: ../skeleton/nest-app
         values:
           component_id: ${{ parameters.component_id }}
           description: ${{ parameters.description }}
           destination: ${{ parameters.repoUrl | parseRepoUrl }}
           owner: ${{ parameters.owner }}
+          app: ${{ parameters.app }}
+          port: ${{ parameters.port }}
+          registry: ${{ parameters.registry }}
 
 
 #    - id: create-catalog

@@ -1,0 +1,30 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: apims-component
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: GMSOPS/new-node-component
+    backstage.io/kubernetes-namespace: backstage
+spec:
+  type: service
+  lifecycle: production
+  owner: devxp-tech
+  system: demo
+  providesApis:
+    - apims-component-api
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: apims-component-api
+  description: Hello World example for RESTAPI
+spec:
+  type: openapi
+  lifecycle: production
+  system: demo
+  owner: devxp-tech
+  providesApis:
+    - storage.gms-ops.io/v1
+  definition: 
+    $text: https://github.com/OAI/OpenAPI-Specification/blob/main/examples/v3.0/petstore.yaml
