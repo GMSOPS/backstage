@@ -123,6 +123,7 @@ spec:
           - github.com
         description: This is ${{ parameters.component_id }}
         repoUrl: ${{ parameters.repoUrl }}
+        defaultBranch: main
 
     - id: register
       name: Register
@@ -170,6 +171,7 @@ spec:
           - github.com
         description: This is ${{ parameters.component_id }}-infrastructure
         repoUrl: ${{ parameters.repoUrl }}-infrastructure
+        defaultBranch: main
 
     - id: register-infra
       name: Register
@@ -183,6 +185,8 @@ spec:
     links:
       - title: Repository
         url: ${{ steps.publish.output.remoteUrl }}
+      - title: Infrastructure Repository
+        url: ${{ steps.publish.output-infra.remoteUrl }}
       - title: Open in catalog
         icon: catalog
         entityRef: ${{ steps.register.output.entityRef }}
