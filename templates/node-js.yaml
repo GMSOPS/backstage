@@ -20,7 +20,6 @@ spec:
         - owner
         - app
         - port
-        - registry
         - host-development
         - host-staging
         - host-production
