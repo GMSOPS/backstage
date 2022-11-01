@@ -94,13 +94,6 @@ spec:
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org
-          gitOwner: ${{ parameters.gitOwner }}
-          hostDevelopment: ${{ parameters.hostDevelopment }}
-          hostStaging: ${{ parameters.hostStaging }}
-          hostProduction: ${{ parameters.hostProduction }}
-          developmentApiServerUrl: https://dev-apiserver.com:6443
-          stagingApiServerUrl: https://staging-apiserver.com:6443
-          productionApiServerUrl: https://production-apiserver.com:6443
 
     - id: publish
       name: Publish
