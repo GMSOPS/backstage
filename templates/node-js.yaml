@@ -53,19 +53,19 @@ spec:
           ui:options:
             allowedKind:
               - Users
-        host-development:
+        hostDevelopment:
           title: Development hostname
           type: string
           description: Application hostname on the development environment
-        host-staging:
+        hostStaging:
           title: Staging hostname
           type: string
           description: Application hostname on the staging environment
-        host-production:
+        hostProduction:
           title: Production hostname
           type: string
           description: Application hostname on the production environment
-        git-owner:
+        gitOwner:
           title: Git Owner
           type: string
           description: Repo Organization or accout
@@ -93,29 +93,6 @@ spec:
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org
-          # development-api-server: https://dev-apiserver.com:6443
-
-
-#    - id: create-catalog
-#      action: catalog:write   
-#      name: Create catalog file
-#      input:
-#        entity:
-#          apiVersion: backstage.io/v1alpha1
-#          kind: Component
-#          metadata:
-#            name: ${{ parameters.component_id }}
-#            annotations: {}
-#            #   backstage.io/techdocs-ref: ${{ { steps.publish.output.repoContentsUrl }}/README.md
-#            # links:
-#            #   - url: https://admin.example-org.com
-#            #     title: Staging url
-#            #     icon: dashboard
-#            #     type: admin-dashboard
-#          spec:
-#            type: service
-#            lifecycle: production
-#            owner: ${{ parameters.owner }}
 
     - id: publish
       name: Publish
@@ -127,14 +104,6 @@ spec:
         description: This is ${{ parameters.component_id }}
         repoUrl: ${{ parameters.repoUrl }}
         defaultBranch: main
-
-    - id: register
-      name: Register
-      action: catalog:register
-      input:
-        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
-        #catalogInfoPath: "/catalog-info.yaml"
-        optional: false
     
     - action: http:backstage:request
       id: http-request
@@ -154,16 +123,16 @@ spec:
         url: ../skeleton/infrastructure
         targetPath: ./infra
         values:
-          git-owner: ${{ parameters.git-owner }}
+          gitOwner: ${{ parameters.gitOwner }}
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org
-          host-development: ${{ parameters.host-development }}
-          host-staging: ${{ parameters.host-staging }}
-          host-production: ${{ parameters.host-production }}
-          development-api-server-url: https://dev-apiserver.com:6443
-          staging-api-server-url: https://staging-apiserver.com:6443
-          production-api-server: https://production-apiserver.com:6443
+          hostDevelopment: ${{ parameters.hostDevelopment }}
+          hostStaging: ${{ parameters.hostStaging }}
+          hostProduction: ${{ parameters.hostProduction }}
+          developmentApiServerUrl: https://dev-apiserver.com:6443
+          stagingApiServerUrl: https://staging-apiserver.com:6443
+          productionApiServerUrl: https://production-apiserver.com:6443
     - id: publish-infra
       name: Publish
       action: publish:github
@@ -175,11 +144,11 @@ spec:
         repoUrl: ${{ parameters.repoUrl }}-infrastructure
         defaultBranch: main
 
-    - id: register-infra
+    - id: register
       name: Register
       action: catalog:register
       input:
-        repoContentsUrl: ${{ steps.publish-infra.output.repoContentsUrl }}
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
         #catalogInfoPath: "/catalog-info.yaml"
         optional: false
 

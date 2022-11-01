@@ -12,7 +12,7 @@ spec:
   project: "${{values.app}}-production"
   source:
     path: "./argocd/production"
-    repoURL: "https://github.com/${{values.git-owner}}/${{values.app}}-infrastructure.git"
+    repoURL: "https://github.com/${{values.gitOwner}}/${{values.app}}-infrastructure.git"
     targetRevision: "main"
     helm:
       valueFiles:

@@ -16,7 +16,7 @@ spec:
     mgmtCidr: 172.31.0.0/16
     clusterCidr: 10.1.0.0/16
     dbVpcId: "vpc-0edbb4ed7e2619f77" 
-    hostname: ${{values.host-production}}
+    hostname: ${{values.hostProduction}}
     dbSubnetIds:
       - subnet-0a28c1d5c4601eed1
       - subnet-03eb49c47146fb539
