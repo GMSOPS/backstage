@@ -159,6 +159,9 @@ spec:
           host-development: ${{ parameters.host-development }}
           host-staging: ${{ parameters.host-staging }}
           host-production: ${{ parameters.host-production }}
+          development-api-server-url: https://dev-apiserver.com:6443
+          staging-api-server-url: https://staging-apiserver.com:6443
+          production-api-server: https://production-apiserver.com:6443
     - id: publish-infra
       name: Publish
       action: publish:github
