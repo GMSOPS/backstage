@@ -51,8 +51,10 @@ spec:
           description: Owner of the component
           ui:field: OwnerPicker
           ui:options:
-            allowedKinds:
-              - Group
+            allowedOwners:
+              - GMSOPS
+              - Mirko
+              - Baja-KS
         host-development:
           title: Development hostname
           type: string
@@ -82,11 +84,8 @@ spec:
       action: fetch:template
       input:
         url: ../skeleton/nest-app
+        targetPath: /tmp/app
         values:
-          component_id: ${{ parameters.component_id }}
-          description: ${{ parameters.description }}
-          destination: ${{ parameters.repoUrl | parseRepoUrl }}
-          owner: ${{ parameters.owner }}
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org
@@ -120,6 +119,7 @@ spec:
       input:
         allowedHosts:
           - github.com
+        sourcePath: /tmp/app
         description: This is ${{ parameters.component_id }}
         repoUrl: ${{ parameters.repoUrl }}
         defaultBranch: main
@@ -148,10 +148,8 @@ spec:
       action: fetch:template
       input:
         url: ../skeleton/infrastructure
+        targetPath: /tmp/infra
         values:
-          component_id: ${{ parameters.component_id }}-infrastructure
-          description: ${{ parameters.description }}
-          destination: ${{ print "%s-infrastructure" parameters.repoUrl | parseRepoUrl }}
           owner: ${{ parameters.owner }}
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
@@ -166,6 +164,7 @@ spec:
       name: Publish
       action: publish:github
       input:
+        sourcePath: /tmp/infra
         allowedHosts:
           - github.com
         description: This is ${{ parameters.component_id }}-infrastructure
