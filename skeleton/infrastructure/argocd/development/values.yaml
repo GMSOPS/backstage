@@ -1,0 +1,17 @@
+argo-apps:
+  spec:
+    destination:
+      server: "${{values.development-api-server-url}}"
+    project: "${{values.app}}-development"
+    suffix: "development"
+
+  apps:
+    ${{values.app}}:
+      ns: ${{values.app}}
+      source:
+        url: "https://github.com/${{values.owner}}/${{values.app}}-infrastructure.git"
+        branch: "main"
+      path: ./crossplane/development
+      autoSync: true
+
+

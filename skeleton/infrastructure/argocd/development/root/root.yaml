@@ -1,0 +1,25 @@
+apiVersion: "argoproj.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: "kisobran-${{values.app}}-development"
+  namespace: "argo-cd"
+  finalizers:
+  - "resources-finalizer.argocd.argoproj.io"
+spec:
+  destination:
+    namespace: "argo-cd"
+    server: "https://kubernetes.default.svc"
+  project: "${{values.app}}-development"
+  source:
+    path: "./argocd/development"
+    repoURL: "https://github.com/${{values.owner}}/${{values.app}}-infrastructure.git"
+    targetRevision: "main"
+    helm:
+      valueFiles:
+      - values.yaml
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+    - "CreateNamespace=true"

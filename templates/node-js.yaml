@@ -21,6 +21,9 @@ spec:
         - app
         - port
         - registry
+        - host-development
+        - host-staging
+        - host-production
       properties:
         component_id:
           title: Name
@@ -32,13 +35,13 @@ spec:
           type: string
           description: Unique name of the application
         port:
-          title: Name
+          title: Port
           type: number
           description: The port app listens on
-        registry:
-          title: Registry
-          type: string
-          description: Hostname of the registry of the app image
+        # registry:
+        #   title: Registry
+        #   type: string
+        #   description: Hostname of the registry of the app image
         description:
           title: Description
           type: string
@@ -51,6 +54,18 @@ spec:
           ui:options:
             allowedKinds:
               - Group
+        host-development:
+          title: Development hostname
+          type: string
+          description: Application hostname on the development environment
+        host-staging:
+          title: Staging hostname
+          type: string
+          description: Application hostname on the staging environment
+        host-production:
+          title: Production hostname
+          type: string
+          description: Application hostname on the production environment
     - title: Choose a location
       required:
         - repoUrl
@@ -75,7 +90,8 @@ spec:
           owner: ${{ parameters.owner }}
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
-          registry: ${{ parameters.registry }}
+          registry: harbor.mgmt.neotechsolutions.org
+          # development-api-server: https://dev-apiserver.com:6443
 
 
 #    - id: create-catalog
@@ -126,6 +142,39 @@ spec:
           'Content-Type': 'application/json'
         body:
           thingname: 'foo'
+
+    - id: template-infra
+      name: Fetch Skeleton + Infra Template
+      action: fetch:template
+      input:
+        url: ../skeleton/infrastructure
+        values:
+          component_id: ${{ parameters.component_id }}-infrastructure
+          description: ${{ parameters.description }}
+          destination: ${{ print "%s-infrastructure" parameters.repoUrl | parseRepoUrl }}
+          owner: ${{ parameters.owner }}
+          app: ${{ parameters.app }}
+          port: ${{ parameters.port }}
+          registry: harbor.mgmt.neotechsolutions.org
+          host-development: ${{ parameters.host-development }}
+          host-staging: ${{ parameters.host-staging }}
+          host-production: ${{ parameters.host-production }}
+    - id: publish-infra
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts:
+          - github.com
+        description: This is ${{ parameters.component_id }}-infrastructure
+        repoUrl: ${{ parameters.repoUrl }}-infrastructure
+
+    - id: register-infra
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish-infra.output.repoContentsUrl }}
+        #catalogInfoPath: "/catalog-info.yaml"
+        optional: false
 
   output:
     links:
