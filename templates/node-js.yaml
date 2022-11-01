@@ -51,10 +51,8 @@ spec:
           description: Owner of the component
           ui:field: OwnerPicker
           ui:options:
-            allowedOwners:
-              - GMSOPS
-              - Mirko
-              - Baja-KS
+            allowedKind:
+              - Users
         host-development:
           title: Development hostname
           type: string

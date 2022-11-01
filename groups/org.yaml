@@ -1,8 +1,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Group
 metadata:
-  name: devxp-tech
-  description: DevXP Technology
+  name: devops
+  description: DevOps
 
   links:
     - url: http://www.devxp-tech.io/
@@ -12,11 +12,40 @@ metadata:
 spec:
   type: organization
   profile:
-    displayName: DevXP Tech
-    email: it@devxp.io
-    # picture: https://avatars.dicebear.com/api/identicon/info@example.com.svg?background=%23fff&margin=25
+    displayName: GMSOPS
+    email: info@gms-ops.net
+    picture: https://avatars.dicebear.com/api/identicon/info@example.com.svg?background=%23fff&margin=25
   children: [group:engineering]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: engineering
+  description: Enjenir
 
+  links:
+    - url: http://www.devxp-tech.io/
+      title: Website
+    - url: https://devxp-tech.local/wiki/
+      title: Intranet
+spec:
+  type: organization
+  profile:
+    displayName: GMSOPS-Enjenir
+    email: info@gms-ops.net
+    picture: https://avatars.dicebear.com/api/identicon/info@example.com.svg?background=%23fff&margin=25
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: baja-ks
+spec:
+  profile:
+    displayName: Baja-KS
+    email: lukic.l210@gmail.com
+    picture: https://i.kym-cdn.com/entries/icons/original/000/032/379/Screen_Shot_2020-01-09_at_2.22.56_PM.png
+  memberOf: [gmsops, employees]
 # ---
 # apiVersion: backstage.io/v1alpha1
 # kind: Location
