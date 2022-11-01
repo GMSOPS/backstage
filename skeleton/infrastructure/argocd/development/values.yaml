@@ -9,7 +9,7 @@ argo-apps:
     ${{values.app}}:
       ns: ${{values.app}}
       source:
-        url: "https://github.com/${{values.owner}}/${{values.app}}-infrastructure.git"
+        url: "https://github.com/${{values.git-owner}}/${{values.app}}-infrastructure.git"
         branch: "main"
       path: ./crossplane/development
       autoSync: true

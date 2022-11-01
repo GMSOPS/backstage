@@ -65,6 +65,12 @@ spec:
           title: Production hostname
           type: string
           description: Application hostname on the production environment
+        git-owner:
+          title: Git Owner
+          type: string
+          description: Repo Organization or accout
+          enum:
+            - GMSOPS
     - title: Choose a location
       required:
         - repoUrl
@@ -148,7 +154,7 @@ spec:
         url: ../skeleton/infrastructure
         targetPath: /tmp/infra
         values:
-          owner: ${{ parameters.owner }}
+          git-owner: ${{ parameters.git-owner }}
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org

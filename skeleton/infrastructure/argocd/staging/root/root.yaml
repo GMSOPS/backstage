@@ -12,7 +12,7 @@ spec:
   project: "${{values.app}}-staging"
   source:
     path: "./argocd/staging"
-    repoURL: "https://github.com/${{values.owner}}/${{values.app}}-infrastructure.git"
+    repoURL: "https://github.com/${{values.git-owner}}/${{values.app}}-infrastructure.git"
     targetRevision: "main"
     helm:
       valueFiles:
