@@ -1,9 +1,9 @@
 argo-apps:
   spec:
     destination:
-      server: "${{values.productionApiServerUrl}}"
-    project: "${{values.app}}-production"
-    suffix: "production"
+      server: "${{values.stagingApiServerUrl}}"
+    project: "${{values.app}}-staging"
+    suffix: "staging"
 
   apps:
     ${{values.app}}:
@@ -11,7 +11,7 @@ argo-apps:
       source:
         url: "https://github.com/${{values.gitOwner}}/${{values.app}}-infrastructure.git"
         branch: "main"
-      path: ./crossplane/production
+      path: ./crossplane/staging
       autoSync: true
 
 
