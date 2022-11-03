@@ -8,7 +8,7 @@ spec:
     name: app-stack-composition
   parameters:
     name: ${{values.app}}
-    image: ${{values.registry}}/${{values.app}}/${{values.app}}
+    image: ${{values.registry}}/${{values.project}}/${{values.app}}
     tag: v0.0.1
     port: "${{values.port}}"
     environment: production

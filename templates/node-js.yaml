@@ -16,7 +16,6 @@ spec:
   parameters:
     - title: Provide some simple information
       required:
-        - component_id
         - owner
         - app
         - port
@@ -25,23 +24,21 @@ spec:
         - hostStaging
         - hostProduction
       properties:
-        component_id:
-          title: Name
+        project:
+          title: Project Name
           type: string
-          description: Unique name of the component
-          ui:field: EntityNamePicker
+          description: Unique name of the project
+          enum:
+            - demo
         app:
           title: Application Name
           type: string
           description: Unique name of the application
+          ui:field: EntityNamePicker
         port:
           title: Port
           type: number
           description: The port app listens on
-        # registry:
-        #   title: Registry
-        #   type: string
-        #   description: Hostname of the registry of the app image
         description:
           title: Description
           type: string
@@ -66,12 +63,6 @@ spec:
           title: Production hostname
           type: string
           description: Application hostname on the production environment
-        gitOwner:
-          title: Git Owner
-          type: string
-          description: Repo Organization or accout
-          enum:
-            - GMSOPS
     - title: Choose a location
       required:
         - repoUrl
@@ -102,7 +93,7 @@ spec:
         allowedHosts:
           - github.com
         sourcePath: ./app
-        description: This is ${{ parameters.component_id }}
+        description: This is ${{ parameters.app }}
         repoUrl: ${{ parameters.repoUrl }}
         defaultBranch: main
     
@@ -124,11 +115,12 @@ spec:
         url: ../skeleton/infrastructure
         targetPath: ./infra
         values:
+          project: ${{ parameters.project }}
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org
-          gitOwner: ${{ parameters.gitOwner }}
-          hostDevelopment: ${{ parameters.hostDevelopment }}
+          repoUrl: ${{ steps.publish.output.remoteUrl }}
+          hostDevelopment: ${{ parameters.app }}-${{ paramteres.project }}.dev.neotechsolutions.org
           hostStaging: ${{ parameters.hostStaging }}
           hostProduction: ${{ parameters.hostProduction }}
           developmentApiServerUrl: https://dev-apiserver.com:6443
@@ -141,7 +133,7 @@ spec:
         sourcePath: ./infra
         allowedHosts:
           - github.com
-        description: This is ${{ parameters.component_id }}-infrastructure
+        description: This is ${{ parameters.app }}-infrastructure
         repoUrl: ${{ parameters.repoUrl }}-infrastructure
         defaultBranch: main
 
