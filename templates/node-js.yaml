@@ -107,10 +107,10 @@ spec:
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org
-          repoUrl: ${{ steps.publish.output.repoContentsUrl }}-infrastructure
-          hostDevelopment: ${{ parameters.app }}-${{ paramteres.project }}.dev.neotechsolutions.org
-          hostStaging: ${{ parameters.app }}-${{ paramteres.project }}.stg.neotechsolutions.org
-          hostProduction: ${{ parameters.app }}-${{ paramteres.project }}.neotechsolutions.org
+          repoUrl: ${{ steps.publish.output.remoteUrl.slice(0,-3) }}
+          hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.neotechsolutions.org
+          hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.neotechsolutions.org
+          hostProduction: ${{ parameters.app }}-${{ parameters.project }}.neotechsolutions.org
           developmentApiServerUrl: https://dev-apiserver.com:6443
           stagingApiServerUrl: https://staging-apiserver.com:6443
           productionApiServerUrl: https://production-apiserver.com:6443
