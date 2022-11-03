@@ -107,7 +107,7 @@ spec:
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org
-          repoUrl: ${{ steps.publish.output.remoteUrl }}
+          repoUrl: ${{ steps.publish.output.repoContentsUrl }}-infrastructure
           hostDevelopment: ${{ parameters.app }}-${{ paramteres.project }}.dev.neotechsolutions.org
           hostStaging: ${{ parameters.app }}-${{ paramteres.project }}.stg.neotechsolutions.org
           hostProduction: ${{ parameters.app }}-${{ paramteres.project }}.neotechsolutions.org
