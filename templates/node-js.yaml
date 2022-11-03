@@ -19,10 +19,9 @@ spec:
         - owner
         - app
         - port
-        - gitOwner
-        - hostDevelopment
-        - hostStaging
-        - hostProduction
+        # - hostDevelopment
+        # - hostStaging
+        # - hostProduction
       properties:
         project:
           title: Project Name
@@ -51,18 +50,18 @@ spec:
           ui:options:
             allowedKind:
               - Users
-        hostDevelopment:
-          title: Development hostname
-          type: string
-          description: Application hostname on the development environment
-        hostStaging:
-          title: Staging hostname
-          type: string
-          description: Application hostname on the staging environment
-        hostProduction:
-          title: Production hostname
-          type: string
-          description: Application hostname on the production environment
+        # hostDevelopment:
+        #   title: Development hostname
+        #   type: string
+        #   description: Application hostname on the development environment
+        # hostStaging:
+        #   title: Staging hostname
+        #   type: string
+        #   description: Application hostname on the staging environment
+        # hostProduction:
+        #   title: Production hostname
+        #   type: string
+        #   description: Application hostname on the production environment
     - title: Choose a location
       required:
         - repoUrl
@@ -96,17 +95,6 @@ spec:
         description: This is ${{ parameters.app }}
         repoUrl: ${{ parameters.repoUrl }}
         defaultBranch: main
-    
-    - action: http:backstage:request
-      id: http-request
-      name: Create a thing on the acme service
-      input:
-        method: POST
-        path: "/api/proxy/test/662beb90-f4ee-4cc2-ac3d-3ed0cf9feb39"
-        headers:
-          'Content-Type': 'application/json'
-        body:
-          thingname: 'foo'
 
     - id: template-infra
       name: Fetch Skeleton + Infra Template
@@ -121,8 +109,8 @@ spec:
           registry: harbor.mgmt.neotechsolutions.org
           repoUrl: ${{ steps.publish.output.remoteUrl }}
           hostDevelopment: ${{ parameters.app }}-${{ paramteres.project }}.dev.neotechsolutions.org
-          hostStaging: ${{ parameters.hostStaging }}
-          hostProduction: ${{ parameters.hostProduction }}
+          hostStaging: ${{ parameters.app }}-${{ paramteres.project }}.stg.neotechsolutions.org
+          hostProduction: ${{ parameters.app }}-${{ paramteres.project }}.neotechsolutions.org
           developmentApiServerUrl: https://dev-apiserver.com:6443
           stagingApiServerUrl: https://staging-apiserver.com:6443
           productionApiServerUrl: https://production-apiserver.com:6443
@@ -136,6 +124,17 @@ spec:
         description: This is ${{ parameters.app }}-infrastructure
         repoUrl: ${{ parameters.repoUrl }}-infrastructure
         defaultBranch: main
+
+    - action: http:backstage:request
+      id: http-request
+      name: Create a thing on the acme service
+      input:
+        method: POST
+        path: "/api/proxy/test/662beb90-f4ee-4cc2-ac3d-3ed0cf9feb39"
+        headers:
+          'Content-Type': 'application/json'
+        body:
+          thingname: 'foo'
 
     - id: register
       name: Register
