@@ -48,6 +48,7 @@ spec:
           description: Unique name of the project
           enum:
             - gms-ops.net
+            - iot.in.rs
         value:
           title: DNS Record Value
           type: string
