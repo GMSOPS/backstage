@@ -170,9 +170,15 @@ spec:
   output:
     links:
       - title: Repository
-        url: ${{ steps.publish.output.remoteUrl }}
+        url: ${{ steps.publish.output.remoteUrl | slice(-4) }}
       - title: Infrastructure Repository
-        url: ${{ steps.publish.output-infra.remoteUrl }}
+        url: ${{ steps.publish.output-infra.remoteUrl | slice(-4) }}
+      - title: Development link
+        url: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
+      - title: Staging link
+        url: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+      - title: Production link
+        url: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
       - title: Open in catalog
         icon: catalog
         entityRef: ${{ steps.register.output.entityRef }}

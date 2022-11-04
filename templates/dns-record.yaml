@@ -1,0 +1,104 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: cf-dns-template
+  title: Cloudflare DNS
+  description: Create a DNS record in cloudflare
+
+  tags:
+    - dns
+    - cloudflare
+    - service
+    - component
+spec:
+  owner: group:sre-team
+  type: component
+  parameters:
+    - title: Provide some simple information
+      required:
+        - owner
+        - type
+        - ttl
+        - domain
+        - record
+        - value
+      properties:
+        type:
+          title: Record Type
+          type: string
+          description: Type of the DNS record (A,TXT,...)
+          enum:
+            - A
+            - CNAME
+            - MX
+            - PTR
+            - TXT
+        record:
+          title: DNS Record Name
+          type: string
+          description: DNS Record name without domain
+          ui:field: EntityNamePicker
+        ttl:
+          title: TTL
+          type: number
+          description: Time-to-live of the dns record
+        domain:
+          title: App domain name
+          type: string
+          description: Unique name of the project
+          enum:
+            - gms-ops.net
+        value:
+          title: DNS Record Value
+          type: string
+          description: Value of the DNS Record
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKind:
+              - Users
+              - Groups
+  steps:
+
+    - action: http:backstage:request
+      id: get-dns-zone
+      name: Get DNS Zone info
+      input:
+        method: GET
+        path: "/api/proxy/cloudflare/api/zones"
+        params:
+            name: ${{ parameters.domain }}
+
+    - action: http:backstage:request
+      id: create-dns-record
+      name: Create DNS record
+      input:
+        method: POST
+        path: "/api/proxy/cloudflare/api/zones/${{ steps.get-dns-zone.output.body.result[0].id }}/dns_records"
+        body:
+          type: ${{ parameters.type }}
+          name: ${{ parameters.record }}
+          content: ${{ parameters.value }}
+          ttl: ${{ parameters.ttl }}
+
+
+    # - id: register
+    #   name: Register
+    #   action: catalog:register
+    #   input:
+    #     repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+    #     #catalogInfoPath: "/catalog-info.yaml"
+    #     optional: false
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Infrastructure Repository
+        url: ${{ steps.publish.output-infra.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
