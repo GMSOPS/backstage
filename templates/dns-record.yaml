@@ -73,11 +73,12 @@ spec:
         params:
             name: ${{ parameters.domain }}
 
-    # - id: log-message
-    #   name: Log Message
-    #   action: debug:log
-    #   input:
-    #     message: ${{ steps.get-dns-zone.output.body.success | string }}
+    - id: log-message
+      name: Log Message
+      action: debug:log
+      input:
+        # extra: ${{ steps.get-dns-zone.output.body }}
+        message: ${{ steps.get-dns-zone.output.code }}
 
     - action: http:backstage:request
       id: create-dns-record
