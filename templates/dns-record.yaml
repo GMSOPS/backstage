@@ -65,7 +65,7 @@ spec:
   steps:
 
     - action: http:backstage:request
-      id: get-dns-zone
+      id: getdnszone
       name: Get DNS Zone info
       input:
         method: GET
@@ -78,15 +78,15 @@ spec:
       action: debug:log
       input:
         # extra: ${{ steps.get-dns-zone.output.body }}
-        message: ${{ steps.get-dns-zone.output.code }}
+        message: '{{ steps.getdnszone.output.code }}'
 
     - action: http:backstage:request
-      id: create-dns-record
-      if: ${{ steps.get-dns-zone.output.success == true }}
+      id: creatednsrecord
+      if: ${{ steps.getdnszone.output.success == true }}
       name: Create DNS record
       input:
         method: POST # result[0].id
-        path: "/api/proxy/cloudflare/api/zones/${{ steps.get-dns-zone.output.body.result[0].id }}/dns_records"
+        path: "/api/proxy/cloudflare/api/zones/${{ steps.getdnszone.output.body.result[0].id }}/dns_records"
         body:
           type: ${{ parameters.type }}
           name: ${{ parameters.record }}
@@ -103,11 +103,6 @@ spec:
     #     optional: false
 
   output:
-    links:
-      - title: Repository
-        url: ${{ steps.publish.output.remoteUrl }}
-      - title: Infrastructure Repository
-        url: ${{ steps.publish.output-infra.remoteUrl }}
-      - title: Open in catalog
-        icon: catalog
-        entityRef: ${{ steps.register.output.entityRef }}
+    getResponse: '{{ steps.getdnszone.output.body }}'
+    getCode: '{{ steps.getdnszone.output.code }}'
+    getHeaders: '{{ steps.getdnszone.output.headers }}'
