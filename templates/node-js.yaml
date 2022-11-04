@@ -122,7 +122,7 @@ spec:
           developmentApiServerUrl: https://dev-apiserver.com:6443
           stagingApiServerUrl: https://staging-apiserver.com:6443
           productionApiServerUrl: https://production-apiserver.com:6443
-    - id: publish-infra
+    - id: publish_infra
       name: Publish
       action: publish:github
       input:
@@ -157,7 +157,7 @@ spec:
           app: ${{ parameters.app }}
           registry: harbor.mgmt.neotechsolutions.org
           repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
-          infrastructure-repo: ${{ steps.publish-infra.output.remoteUrl | slice(-4) }}
+          infrastructure-repo: ${{ steps.publish_infra.output.remoteUrl | slice(-4) }}
 
     - id: register
       name: Register
@@ -172,7 +172,7 @@ spec:
       - title: Repository
         url: ${{ steps.publish.output.remoteUrl | slice(-4) }}
       - title: Infrastructure Repository
-        url: ${{ steps.publish-infra.output.remoteUrl | slice(-4) }}
+        url: ${{ steps.publish_infra.output.remoteUrl | slice(-4) }}
       - title: Development link
         url: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
       - title: Staging link

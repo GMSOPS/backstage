@@ -97,9 +97,3 @@ spec:
     #     #catalogInfoPath: "/catalog-info.yaml"
     #     optional: false
 
-  output:
-    links:
-      - title: ${{steps.get_dns_zone.output.body.result[0].id}}
-        url: "https://google.com"
-      - title: ${{steps.get_dns_zone.output.code}}
-        url: "https://google.com"
