@@ -71,7 +71,7 @@ spec:
         method: GET
         path: "/api/proxy/cloudflare/api/zones"
         params:
-        name: ${{ parameters.domain }}
+            name: ${{ parameters.domain }}
 
     - id: log-message
       name: Log Message
