@@ -80,6 +80,8 @@ spec:
       input:
         method: POST
         path: /api/proxy/cloudflare/api/zones/${{steps.getDnsZone.output.body.result[0].id}}/dns_records
+        headers:
+            'content-type': 'application/json'
         body:
           type: ${{ parameters.type }}
           name: ${{ parameters.record }}
