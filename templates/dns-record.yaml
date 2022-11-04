@@ -75,7 +75,7 @@ spec:
 
     - action: http:backstage:request
       id: create_dns_record
-      if: ${{steps.get_dns_zone.output.code === "200"}}
+      if: ${{steps.get_dns_zone.output.body.success === true}}
       name: Create DNS record
       input:
         method: POST
