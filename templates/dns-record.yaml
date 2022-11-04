@@ -72,12 +72,12 @@ spec:
         path: "/api/proxy/cloudflare/api/zones"
         params:
             name: ${{ parameters.domain }}
-            
+
     - id: log-message
       name: Log Message
       action: debug:log
       input:
-        message: ${{ steps.get-dns-zone.output.body }}
+        message: ${{ steps.get-dns-zone.output.body | string }}
 
     - action: http:backstage:request
       id: create-dns-record
