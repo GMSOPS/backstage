@@ -77,7 +77,7 @@ spec:
       name: Log Message
       action: debug:log
       input:
-        message: ${{ steps.get-dns-zone.output.body.result[0].id }}
+        extra: ${{ steps.get-dns-zone.output.body }}
 
     - action: http:backstage:request
       id: create-dns-record
