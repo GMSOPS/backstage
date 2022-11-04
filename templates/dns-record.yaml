@@ -80,18 +80,18 @@ spec:
         # extra: ${{ steps.get-dns-zone.output.body }}
         message: '{{ steps.getdnszone.output.code }}'
 
-    - action: http:backstage:request
-      id: creatednsrecord
-      if: ${{ steps.getdnszone.output.success == true }}
-      name: Create DNS record
-      input:
-        method: POST # result[0].id
-        path: "/api/proxy/cloudflare/api/zones/${{ steps.getdnszone.output.body.result[0].id }}/dns_records"
-        body:
-          type: ${{ parameters.type }}
-          name: ${{ parameters.record }}
-          content: ${{ parameters.value }}
-          ttl: ${{ parameters.ttl }}
+    # - action: http:backstage:request
+    #   id: creatednsrecord
+    #   if: ${{ steps.getdnszone.output.success == true }}
+    #   name: Create DNS record
+    #   input:
+    #     method: POST # result[0].id
+    #     path: "/api/proxy/cloudflare/api/zones/${{ steps.getdnszone.output.body.result[0].id }}/dns_records"
+    #     body:
+    #       type: ${{ parameters.type }}
+    #       name: ${{ parameters.record }}
+    #       content: ${{ parameters.value }}
+    #       ttl: ${{ parameters.ttl }}
 
 
     # - id: register
