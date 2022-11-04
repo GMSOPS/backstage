@@ -172,7 +172,7 @@ spec:
       - title: Repository
         url: ${{ steps.publish.output.remoteUrl | slice(-4) }}
       - title: Infrastructure Repository
-        url: ${{ steps.publish.output-infra.remoteUrl | slice(-4) }}
+        url: ${{ steps.publish-infra.output.remoteUrl | slice(-4) }}
       - title: Development link
         url: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
       - title: Staging link
