@@ -65,7 +65,7 @@ spec:
   steps:
 
     - action: http:backstage:request
-      id: getdnszone
+      id: getDnsZone
       name: Get DNS Zone info
       input:
         method: GET
@@ -73,20 +73,13 @@ spec:
         params:
             name: ${{ parameters.domain }}
 
-    # - id: log-message
-    #   name: Log Message
-    #   action: debug:log
-    #   input:
-    #     # extra: ${{ steps.get-dns-zone.output.body }}
-    #     message: ${{ steps.getdnszone.output.code }}
-
     - action: http:backstage:request
-      id: creatednsrecord
+      id: createDnsRecord
     #   if: ${{steps.getdnszone.output.code === "200"}}
       name: Create DNS record
       input:
-        method: POST # result[0].id
-        path: /api/proxy/cloudflare/api/zones/${{steps.getdnszone.output.body.result[0].id}}/dns_records
+        method: POST
+        path: /api/proxy/cloudflare/api/zones/${{steps.getDnsZone.output.body.result[0].id}}/dns_records
         body:
           type: ${{ parameters.type }}
           name: ${{ parameters.record }}
@@ -104,7 +97,7 @@ spec:
 
   output:
     links:
-      - title: ${{steps.getdnszone.output.body.result[0].id}}
+      - title: ${{steps.getDnsZone.output.body.result[0].id}}
         url: "https://google.com"
       - title: ${{steps.getdnszone.output.code}}
         url: "https://google.com"
