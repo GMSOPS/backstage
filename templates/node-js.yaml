@@ -19,9 +19,7 @@ spec:
         - owner
         - app
         - port
-        # - hostDevelopment
-        # - hostStaging
-        # - hostProduction
+        - domain
       properties:
         project:
           title: Project Name
@@ -38,6 +36,16 @@ spec:
           title: Port
           type: number
           description: The port app listens on
+        domain:
+          title: App domain name
+          type: string
+          description: Unique name of the project
+          enum:
+            - gms-ops.net
+        autoDns:
+          title: Automatically add dns records
+          type: boolean
+          default: true
         description:
           title: Description
           type: string
@@ -108,9 +116,9 @@ spec:
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org
           repoUrl: ${{ steps.publish.output.remoteUrl | slice(-4) }}-infrastructure
-          hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.neotechsolutions.org
-          hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.neotechsolutions.org
-          hostProduction: ${{ parameters.app }}-${{ parameters.project }}.neotechsolutions.org
+          hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
+          hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+          hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
           developmentApiServerUrl: https://dev-apiserver.com:6443
           stagingApiServerUrl: https://staging-apiserver.com:6443
           productionApiServerUrl: https://production-apiserver.com:6443
@@ -126,15 +134,30 @@ spec:
         defaultBranch: main
 
     - action: http:backstage:request
-      id: http-request
-      name: Create a thing on the acme service
+      id: add-dns-records
+      if: ${{ parameters.autoDns == true }}
+      name: Create DNS record
       input:
         method: POST
-        path: "/api/proxy/test/662beb90-f4ee-4cc2-ac3d-3ed0cf9feb39"
-        headers:
-          'Content-Type': 'application/json'
+        path: "/api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records"
         body:
-          thingname: 'foo'
+          type: A
+          name: ${{ parameters.app }}-${{ parameters.project }}.dev
+          content: "10.0.0.1"
+          ttl: 1
+
+    - action: http:backstage:request
+      id: run-workflow
+      name: Run bootstrap workflow
+      input:
+        method: POST
+        path: "/api/proxy/workflow/webhook/app-bootstrap"
+        body:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          registry: harbor.mgmt.neotechsolutions.org
+          repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
+          infrastructure-repo: ${{ steps.publish-infra.output.remoteUrl | slice(-4) }}
 
     - id: register
       name: Register

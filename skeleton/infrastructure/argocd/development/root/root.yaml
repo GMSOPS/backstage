@@ -12,7 +12,6 @@ spec:
   project: "${{values.app}}-development"
   source:
     path: "./argocd/development"
-    # repoURL: "https://github.com/${{values.gitOwner}}/${{values.app}}-infrastructure.git"
     repoUrl: "${{values.repoUrl}}"
     targetRevision: "main"
     helm:
