@@ -119,7 +119,7 @@ spec:
           hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
           hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
           hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
-          developmentApiServerUrl: https://dev-apiserver.com:6443
+          developmentApiServerUrl: https://w4rpzvhgnt.kubermatic.mgmt.neotechsolutions.org:31886
           stagingApiServerUrl: https://staging-apiserver.com:6443
           productionApiServerUrl: https://production-apiserver.com:6443
     - id: publish_infra
@@ -134,12 +134,14 @@ spec:
         defaultBranch: main
 
     - action: http:backstage:request
-      id: add-dns-records
+      id: add_dns_records
       if: ${{ parameters.autoDns == true }}
       name: Create DNS record
       input:
         method: POST
-        path: "/api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records"
+        path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
+        headers:
+            'content-type': 'application/json'
         body:
           type: A
           name: ${{ parameters.app }}-${{ parameters.project }}.dev
