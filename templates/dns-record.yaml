@@ -73,16 +73,16 @@ spec:
         params:
             name: ${{ parameters.domain }}
 
-    - id: log-message
-      name: Log Message
-      action: debug:log
-      input:
-        # extra: ${{ steps.get-dns-zone.output.body }}
-        message: ${{ steps.get-dns-zone.output.code }}
+    # - id: log-message
+    #   name: Log Message
+    #   action: debug:log
+    #   input:
+    #     # extra: ${{ steps.get-dns-zone.output.body }}
+    #     message: ${{ steps.get-dns-zone.output.code }}
 
     - action: http:backstage:request
       id: create-dns-record
-      if: ${{ steps.get-dns-zone.output.body.success }}
+      if: ${{ steps.get-dns-zone.output.code == 200 }}
       name: Create DNS record
       input:
         method: POST # result[0].id
