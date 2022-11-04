@@ -77,14 +77,14 @@ spec:
       name: Log Message
       action: debug:log
       input:
-        message: ${{ steps.get-dns-zone.output.body.success }}
+        message: ${{ steps.get-dns-zone.output.body.success | string }}
 
     - action: http:backstage:request
       id: create-dns-record
       name: Create DNS record
       input:
         method: POST # result[0].id
-        path: "/api/proxy/cloudflare/api/zones/${{ steps.get-dns-zone.output.body.success }}/dns_records"
+        path: "/api/proxy/cloudflare/api/zones/${{ steps.get-dns-zone.output.body.success | string }}/dns_records"
         body:
           type: ${{ parameters.type }}
           name: ${{ parameters.record }}
