@@ -104,7 +104,7 @@ spec:
 
   output:
     links:
-      - title: "{{steps.getdnszone.output.body}}"
+      - title: ${{steps.getdnszone.output.body}}
         url: "https://google.com"
-      - title: "{{steps.getdnszone.output.code}}"
+      - title: ${{steps.getdnszone.output.code}}
         url: "https://google.com"
