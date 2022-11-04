@@ -73,18 +73,19 @@ spec:
         params:
             name: ${{ parameters.domain }}
 
-    - id: log-message
-      name: Log Message
-      action: debug:log
-      input:
-        message: ${{ steps.get-dns-zone.output.body.success | string }}
+    # - id: log-message
+    #   name: Log Message
+    #   action: debug:log
+    #   input:
+    #     message: ${{ steps.get-dns-zone.output.body.success | string }}
 
     - action: http:backstage:request
       id: create-dns-record
+      if: ${{ steps.get-dns-zone.output.body.success }}
       name: Create DNS record
       input:
         method: POST # result[0].id
-        path: "/api/proxy/cloudflare/api/zones/${{ steps.get-dns-zone.output.body.success | string }}/dns_records"
+        path: "/api/proxy/cloudflare/api/zones/${{ steps.get-dns-zone.output.body.result[0].id }}/dns_records"
         body:
           type: ${{ parameters.type }}
           name: ${{ parameters.record }}
