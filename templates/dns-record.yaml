@@ -82,7 +82,7 @@ spec:
 
     - action: http:backstage:request
       id: creatednsrecord
-      if: ${{steps.getdnszone.output.code === "200"}}
+    #   if: ${{steps.getdnszone.output.code === "200"}}
       name: Create DNS record
       input:
         method: POST # result[0].id
