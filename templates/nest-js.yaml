@@ -21,7 +21,14 @@ spec:
         - app
         - port
         - domain
+        - gitOwner
       properties:
+        gitOwner:
+          title: Github User/Organization
+          type: string
+          description: Github username or organization name
+          enum:
+            - GMSOPS
         project:
           title: Project Name
           type: string
@@ -59,17 +66,7 @@ spec:
           ui:options:
             allowedKind:
               - Users
-    # - title: Choose a location
-    #   required:
-    #     - repoUrl
-    #   properties:
-    #     repoUrl:
-    #       title: Repository Location
-    #       type: string
-    #       ui:field: RepoUrlPicker
-    #       ui:options:
-    #         allowedHosts:
-    #           - github.com
+              - Groups
   steps:
     - id: template
       name: Fetch Skeleton + Template
@@ -81,9 +78,6 @@ spec:
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org
-          hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
-          hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
-          hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
 
     - id: publish
       name: Publish
@@ -93,12 +87,41 @@ spec:
           - github.com
         sourcePath: ./app
         description: This is ${{ parameters.app }}
-        repoUrl: ${{ parameters.repoUrl }}
+        repoUrl: github.com?owner=${{ parameters.gitOwner }}&repo=${{ parameters.app }}
         defaultBranch: main
+
+
+    - id: fetch_template_app
+      name: Fetch Application Crossplane Templates
+      action: fetch:template
+      input:
+        targetPath: ./app
+        url: ../skeleton/crossplane/app
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          port: ${{ parameters.port }}
+          registry: harbor.mgmt.neotechsolutions.org
+          hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
+          hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+          hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+
+    - id: open-pr
+      name: "Open PR in GitOps Repository for the app crossplanes"
+      action: publish:github:pull-request
+      if: ${{ parameters.dryRun == false }}
+      input:
+        repoUrl: github.com?repo=${{ parameters.project }}-infrastructure&owner=${{ parameters.gitOwner }}
+        branchName: feat/create-${{ parameters.project }}-${{ parameters.app }}-${{ parameters.environment }}
+        title: ':robot: [backstage-bot] Create ${{ parameters.project }} ${{ parameters.app }} ${{ parameters.environment }} application'
+        description: |
+          ${{ parameters.description if parameters.description }}
+        sourcePath: app
+        targetPath: ./
 
     - action: http:backstage:request
       id: add_dns_records
-      if: ${{ parameters.autoDns == true }}
+      if: ${{ parameters.autoDns }}
       name: Create DNS record
       input:
         method: POST
@@ -122,38 +145,6 @@ spec:
           app: ${{ parameters.app }}
           registry: harbor.mgmt.neotechsolutions.org
           repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
-          infrastructure-repo: ${{ steps.publish.output.remoteUrl | slice(-(parameters.app | length + 4)) }}/${{ parameters.project }}-infrastructure
-
-    # - id: template-infra
-    #   name: Fetch Skeleton + Infra Template
-    #   action: fetch:template
-    #   input:
-    #     url: ../skeleton/infrastructure
-    #     targetPath: ./infra
-    #     values:
-    #       project: ${{ parameters.project }}
-    #       app: ${{ parameters.app }}
-    #       port: ${{ parameters.port }}
-    #       registry: harbor.mgmt.neotechsolutions.org
-    #       repoUrl: ${{ steps.publish.output.remoteUrl | slice(-4) }}-infrastructure
-    #       hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
-    #       hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
-    #       hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
-    #       developmentApiServerUrl: https://w4rpzvhgnt.kubermatic.mgmt.neotechsolutions.org:31886
-    #       stagingApiServerUrl: https://staging-apiserver.com:6443
-    #       productionApiServerUrl: https://production-apiserver.com:6443
-    # - id: publish_infra
-    #   name: Publish
-    #   action: publish:github
-    #   input:
-    #     sourcePath: ./infra
-    #     allowedHosts:
-    #       - github.com
-    #     description: This is ${{ parameters.app }}-infrastructure
-    #     repoUrl: ${{ parameters.repoUrl }}-infrastructure
-    #     defaultBranch: main
-
-
 
     - id: register
       name: Register
@@ -168,7 +159,7 @@ spec:
       - title: Repository
         url: ${{ steps.publish.output.remoteUrl | slice(-4) }}
       - title: Infrastructure Repository
-        url: ${{ steps.publish.output.remoteUrl | slice(-(parameters.app | length + 4)) }}/${{ parameters.project }}-infrastructure
+        url: https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
       - title: Development link
         url: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
       - title: Staging link
