@@ -22,7 +22,14 @@ spec:
         - app
         - environment
         - region
+        - gitOwner
       properties:
+        gitOwner:
+          title: Github User/Organization
+          type: string
+          description: Github username or organization name of the project infrastructure repo
+          enum:
+            - GMSOPS
         project:
           title: Project Name
           type: string
