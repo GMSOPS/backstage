@@ -1,7 +1,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: ${{values.project}}-component
+  name: ${{values.project}}-infrastructure-component
   annotations:
     backstage.io/techdocs-ref: dir:.
     github.com/project-slug: GMSOPS/${{values.project}}-infrastructure
