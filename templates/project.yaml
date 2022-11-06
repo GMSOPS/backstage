@@ -98,7 +98,7 @@ spec:
         allowedHosts:
           - github.com
         description: Infrastructure repo of the ${{ parameters.project }} project
-        repoUrl: https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
+        repoUrl: github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
         defaultBranch: main
 
     - action: http:backstage:request
