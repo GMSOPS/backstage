@@ -165,15 +165,15 @@ spec:
   output:
     links:
       - title: Repository
-        url: ${{ steps.publish.output.remoteUrl | slice(-4) }}
+        url: https://github.com/${{ parameters.gitOwner }}/${{ parameters.app }}
       - title: Infrastructure Repository
         url: https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
       - title: Development link
-        url: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
+        url: https://${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
       - title: Staging link
-        url: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+        url: https://${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
       - title: Production link
-        url: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+        url: https://${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
       - title: Open in catalog
         icon: catalog
         entityRef: ${{ steps.register.output.entityRef }}
