@@ -95,7 +95,7 @@ spec:
       name: Fetch Application Crossplane Templates
       action: fetch:template
       input:
-        targetPath: ./app
+        targetPath: ./cp-app
         url: ../skeleton/crossplane/app
         values:
           project: ${{ parameters.project }}
@@ -107,7 +107,7 @@ spec:
           hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
 
     - id: open-pr
-      name: "Open PR in GitOps Repository for the app crossplanes"
+      name: "Open PR in GitOps Repository for the app crossplane"
       action: publish:github:pull-request
       if: ${{ parameters.dryRun == false }}
       input:
@@ -116,7 +116,7 @@ spec:
         title: ':robot: [backstage-bot] Create ${{ parameters.project }} ${{ parameters.app }} ${{ parameters.environment }} application'
         description: |
           ${{ parameters.description if parameters.description }}
-        sourcePath: app
+        sourcePath: cp-app
         targetPath: ./
 
     - action: http:backstage:request
