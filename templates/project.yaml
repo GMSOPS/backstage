@@ -155,18 +155,18 @@ spec:
           member_group:
             group_name: /HarborReadOnly
 
+
+    # THIS WILL BE ARGO PROJECT & APP WORKFLOW APPLY STEP
+
     # - action: http:backstage:request
     #   id: run-workflow
     #   name: Run bootstrap workflow
     #   input:
     #     method: POST
-    #     path: "/api/proxy/workflow/webhook/app-bootstrap"
+    #     path: "/api/proxy/workflow/webhook/project-bootstrap"
     #     body:
     #       project: ${{ parameters.project }}
-    #       app: ${{ parameters.app }}
-    #       registry: harbor.mgmt.neotechsolutions.org
-    #       repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
-    #       infrastructure-repo: ${{ steps.publish_infra.output.remoteUrl | slice(-4) }}
+    #       infrastructure-repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
 
     - id: register
       name: Register

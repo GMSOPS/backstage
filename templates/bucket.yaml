@@ -77,7 +77,7 @@ spec:
       action: publish:github:pull-request
       if: ${{ parameters.dryRun == false }}
       input:
-        repoUrl: github.com?repo=backstage&owner=GMSOPS # github.com?repo=${{parameters.project}}-infrastructure&owner=${{parameters.gitOwner}}
+        repoUrl: github.com?repo=${{ parameters.project }}-infrastructure&owner=${{ parameters.gitOwner }}
         branchName: feat/create-${{ parameters.project }}-${{ parameters.app }}-${{ parameters.environment }}-s3
         title: ':robot: [backstage-bot] Create ${{ parameters.project }} ${{ parameters.app }} ${{ parameters.environment }} s3 bucket'
         description: |
