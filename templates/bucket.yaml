@@ -78,6 +78,12 @@ spec:
           app: ${{ parameters.app }}
           environment: ${{ parameters.environment }}
           region: ${{ parameters.region }}
+    
+    - name: Results
+      if: ${{ parameters.dryRun }}
+      action: debug:log
+      input:
+        listWorkspace: true
 
     - id: open-pr
       name: "Open PR in GitOps Repository"
@@ -100,12 +106,6 @@ spec:
     #     repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
     #     catalogInfoPath: "/catalog-info.yaml"
 
-
-    - name: Results
-      if: ${{ parameters.dryRun }}
-      action: debug:log
-      input:
-        listWorkspace: true
 
   output:
     links:

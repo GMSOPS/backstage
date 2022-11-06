@@ -79,6 +79,12 @@ spec:
           environment: ${{ parameters.environment }}
           region: ${{ parameters.region }}
 
+    - name: Results
+      if: ${{ parameters.dryRun }}
+      action: debug:log
+      input:
+        listWorkspace: true
+
     - id: open-pr
       name: "Open PR in GitOps Repository"
       action: publish:github:pull-request
