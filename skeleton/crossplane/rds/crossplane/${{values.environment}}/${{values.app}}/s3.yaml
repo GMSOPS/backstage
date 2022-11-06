@@ -1,0 +1,14 @@
+apiVersion: storage.gmsops.io/v1alpha1
+kind: Database
+metadata:
+  namespace: ${{values.app}}
+  name: ${{values.app}}
+spec:
+  compositionRef:
+    name: db-composition
+  parameters:
+    project: ${{values.project}}
+    app: ${{values.app}}
+    environment: ${{values.environment}}
+    region: ${{values.region}}
+
