@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ${{values.app}}-staging
+  namespace: argo-cd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: "${{values.app}}"
+    server: ${{values.stagingApiServerUrl}}
+  project: ${{values.project}}-staging
+  source:
+    path: "./crossplane/staging"
+    repoURL: ${{values.repoUrl}}
+    targetRevision: main
+    directory:
+      recurse: true
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,72 @@
+apiVersion: helm.gmsops.io/v1beta1
+kind: App
+metadata:
+  namespace: ${{values.app}}
+  name: ${{values.app}}
+spec:
+  compositionRef:
+    name: apps-composition
+  parameters:
+    name: ${{values.app}}
+    image: ${{values.registry}}/${{values.project}}/${{values.app}}
+    tag: v0.0.1
+    port: "${{values.port}}"
+    hostname: ${{values.hostDevelopment}}
+
+# apiVersion: storage.gmsops.io/v1alpha1
+# kind: Bucket
+# metadata:
+#   namespace: ${{values.app}}
+#   name: ${{values.app}}
+# spec:
+#   compositionRef:
+#     name: bucket-composition
+#   parameters:
+#     project: ${{values.project}}
+#     app: ${{values.app}}
+#     environment: ${{values.environment}}
+#     region: ${{values.region}}
+
+
+# apiVersion: helm.gmsops.io/v1beta1
+# kind: App
+# metadata:
+#   namespace: nest-example-app
+#   name: nest-example-app
+# spec:
+#   compositionRef:
+#     name: apps-composition
+#   parameters:
+#     name: nest-example-app
+#     environment: development
+#     image: harbor.mgmt.neotechsolutions.org/nest-example-app/nest-example-app
+#     tag: v0.0.1
+#     chartVersion: 0.1.2
+#     port: "3000"
+
+# apiVersion: stack.gmsops.io/v1alpha1
+# kind: App
+# metadata:
+#   namespace: ${{values.app}}
+#   name: ${{values.app}}
+# spec:
+#   compositionRef:
+#     name: app-stack-composition
+#   parameters:
+#     name: ${{values.app}}
+#     image: ${{values.registry}}/${{values.project}}/${{values.app}}
+#     tag: v0.0.1
+#     port: "${{values.port}}"
+#     environment: development
+#     region: eu-west-1
+#     mgmtCidr: 172.31.0.0/16
+#     clusterCidr: 10.2.0.0/16
+#     dbVpcId: "vpc-0edbb4ed7e2619f77" 
+#     hostname: ${{values.hostDevelopment}}
+#     dbSubnetIds:
+#       - subnet-0a28c1d5c4601eed1
+#       - subnet-03eb49c47146fb539
+#       - subnet-043582d54ff7b6852
+
+
+
