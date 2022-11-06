@@ -1,0 +1,14 @@
+apiVersion: storage.gmsops.io/v1alpha1
+kind: Bucket
+metadata:
+  namespace: some-nest-app
+  name: some-nest-app
+spec:
+  compositionRef:
+    name: bucket-composition
+  parameters:
+    project: demo
+    app: some-nest-app
+    environment: development
+    region: eu-west-1
+
