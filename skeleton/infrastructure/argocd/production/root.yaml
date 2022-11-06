@@ -1,13 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: ${{values.app}}-production
+  name: ${{values.project}}-production
   namespace: argo-cd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: "${{values.app}}"
+    namespace: "${{values.project}}"
     server: ${{values.productionApiServerUrl}}
   project: ${{values.project}}-production
   source:

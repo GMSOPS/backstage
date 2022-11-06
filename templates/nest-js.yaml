@@ -1,0 +1,180 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: nestjs-template
+  title: NestJS Application
+  description: Create a NestJS Application
+
+  tags:
+    - node
+    - nestjs
+    - recommended
+    - service
+    - component
+spec:
+  owner: group:sre-team
+  type: component
+  parameters:
+    - title: Provide some simple information
+      required:
+        - owner
+        - app
+        - port
+        - domain
+      properties:
+        project:
+          title: Project Name
+          type: string
+          description: Unique name of the project
+          enum:
+            - demo
+        app:
+          title: Application Name
+          type: string
+          description: Unique name of the application
+          ui:field: EntityNamePicker
+        port:
+          title: Port
+          type: number
+          description: The port app listens on
+        domain:
+          title: App domain name
+          type: string
+          description: Unique name of the project
+          enum:
+            - gms-ops.net
+        autoDns:
+          title: Automatically add dns records
+          type: boolean
+          default: true
+        description:
+          title: Description
+          type: string
+          description: Help others understand what this website is for.
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKind:
+              - Users
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+  steps:
+    - id: template
+      name: Fetch Skeleton + Template
+      action: fetch:template
+      input:
+        url: ../skeleton/nest-app
+        targetPath: ./app
+        values:
+          app: ${{ parameters.app }}
+          port: ${{ parameters.port }}
+          registry: harbor.mgmt.neotechsolutions.org
+          hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
+          hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+          hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        allowedHosts:
+          - github.com
+        sourcePath: ./app
+        description: This is ${{ parameters.app }}
+        repoUrl: ${{ parameters.repoUrl }}
+        defaultBranch: main
+
+    - action: http:backstage:request
+      id: add_dns_records
+      if: ${{ parameters.autoDns == true }}
+      name: Create DNS record
+      input:
+        method: POST
+        path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
+        headers:
+            'content-type': 'application/json'
+        body:
+          type: A
+          name: ${{ parameters.app }}-${{ parameters.project }}.dev
+          content: "10.0.0.1"
+          ttl: 1
+
+    - action: http:backstage:request
+      id: run-workflow
+      name: Run bootstrap workflow
+      input:
+        method: POST
+        path: "/api/proxy/workflow/webhook/app-bootstrap"
+        body:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          registry: harbor.mgmt.neotechsolutions.org
+          repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
+          infrastructure-repo: ${{ steps.publish.output.remoteUrl | slice(-(parameters.app | length + 4)) }}/${{ parameters.project }}-infrastructure
+
+    # - id: template-infra
+    #   name: Fetch Skeleton + Infra Template
+    #   action: fetch:template
+    #   input:
+    #     url: ../skeleton/infrastructure
+    #     targetPath: ./infra
+    #     values:
+    #       project: ${{ parameters.project }}
+    #       app: ${{ parameters.app }}
+    #       port: ${{ parameters.port }}
+    #       registry: harbor.mgmt.neotechsolutions.org
+    #       repoUrl: ${{ steps.publish.output.remoteUrl | slice(-4) }}-infrastructure
+    #       hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
+    #       hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+    #       hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+    #       developmentApiServerUrl: https://w4rpzvhgnt.kubermatic.mgmt.neotechsolutions.org:31886
+    #       stagingApiServerUrl: https://staging-apiserver.com:6443
+    #       productionApiServerUrl: https://production-apiserver.com:6443
+    # - id: publish_infra
+    #   name: Publish
+    #   action: publish:github
+    #   input:
+    #     sourcePath: ./infra
+    #     allowedHosts:
+    #       - github.com
+    #     description: This is ${{ parameters.app }}-infrastructure
+    #     repoUrl: ${{ parameters.repoUrl }}-infrastructure
+    #     defaultBranch: main
+
+
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        #catalogInfoPath: "/catalog-info.yaml"
+        optional: false
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl | slice(-4) }}
+      - title: Infrastructure Repository
+        url: ${{ steps.publish.output.remoteUrl | slice(-(parameters.app | length + 4)) }}/${{ parameters.project }}-infrastructure
+      - title: Development link
+        url: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
+      - title: Staging link
+        url: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+      - title: Production link
+        url: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

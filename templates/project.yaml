@@ -1,0 +1,191 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: project-template
+  title: Project (Infrastructure)
+  description: Create a new project with an infrastructure repo base & registry project
+
+  tags:
+    - project
+    - infrastructure
+    - recommended
+    - service
+    - component
+spec:
+  owner: group:sre-team
+  type: component
+  parameters:
+    - title: Provide some simple information
+      required:
+        - gitOwner
+        - owner
+        - project
+        - registry
+        - developmentApiServerUrl
+        - stagingApiServerUrl
+        - productionApiServerUrl
+      properties:
+        gitOwner:
+          title: Github User/Organization
+          type: string
+          description: Github username or organization name
+          enum:
+            - GMSOPS
+        project:
+          title: Project Name
+          type: string
+          description: Unique name of the project
+          enum:
+            - demo
+        registry:
+          title: Registry
+          type: string
+          description: Hostname of the image registry
+          enum:
+            - harbor.mgmt.neotechsolutions.org
+        developmentApiServerUrl:
+          title: API Server - Development
+          type: string
+          description: Development cluster API server url
+        stagingApiServerUrl:
+          title: API Server - Staging
+          type: string
+          description: Staging cluster API server url
+        productionApiServerUrl:
+          title: API Server - Production
+          type: string
+          description: Production cluster API server url
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKind:
+              - Users
+              - Groups
+    # - title: Choose a location
+    #   required:
+    #     - repoUrl
+    #   properties:
+    #     repoUrl:
+    #       title: Repository Location
+    #       type: string
+    #       ui:field: RepoUrlPicker
+    #       ui:options:
+    #         allowedHosts:
+    #           - github.com
+  steps:
+    - id: template
+      name: Fetch Skeleton + Infra Template
+      action: fetch:template
+      input:
+        url: ../skeleton/infrastructure
+        targetPath: ./infra
+        values:
+          project: ${{ parameters.project }}
+          port: ${{ parameters.port }}
+          registry: ${{ parameters.registry }}
+          repoUrl: https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
+          developmentApiServerUrl: ${{ parameters.developmentApiServerUrl }} # https://w4rpzvhgnt.kubermatic.mgmt.neotechsolutions.org:31886
+          stagingApiServerUrl: ${{ parameters.stagingApiServerUrl }} # https://staging-apiserver.com:6443
+          productionApiServerUrl: ${{ parameters.productionApiServerUrl }} # https://production-apiserver.com:6443
+    - id: publish
+      name: Publish
+      action: publish:github
+      input:
+        sourcePath: ./infra
+        allowedHosts:
+          - github.com
+        description: Infrastructure repo of the ${{ parameters.project }} project
+        repoUrl: https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
+        defaultBranch: main
+
+    - action: http:backstage:request
+      id: add_harbor_project
+      name: Create Harbor Project
+      input:
+        method: POST
+        path: /api/proxy/harbor/api/projects
+        headers:
+            'content-type': 'application/json'
+        body:
+          project_name: ${{ parameters.project }}
+          public: false
+          metadata:
+            auto_scan: "true"
+          storage_limit: 0
+
+    - action: http:backstage:request
+      id: add_harbor_admin_group_to_project
+      name: Add admin group to harbor project
+      input:
+        method: POST
+        path: /api/proxy/harbor/api/projects/${{ parameters.project }}/members
+        headers:
+            'content-type': 'application/json'
+        body:
+          role_id: 1
+          member_group:
+            group_name: /HarborAdmin
+    - action: http:backstage:request
+      id: add_harbor_developer_group_to_project
+      name: Add developer group to harbor project
+      input:
+        method: POST
+        path: /api/proxy/harbor/api/projects/${{ parameters.project }}/members
+        headers:
+            'content-type': 'application/json'
+        body:
+          role_id: 2
+          member_group:
+            group_name: /HarborDeveloper
+    - action: http:backstage:request
+      id: add_harbor_read_group_to_project
+      name: Add read-only group to harbor project
+      input:
+        method: POST
+        path: /api/proxy/harbor/api/projects/${{ parameters.project }}/members
+        headers:
+            'content-type': 'application/json'
+        body:
+          role_id: 3
+          member_group:
+            group_name: /HarborReadOnly
+
+    # - action: http:backstage:request
+    #   id: run-workflow
+    #   name: Run bootstrap workflow
+    #   input:
+    #     method: POST
+    #     path: "/api/proxy/workflow/webhook/app-bootstrap"
+    #     body:
+    #       project: ${{ parameters.project }}
+    #       app: ${{ parameters.app }}
+    #       registry: harbor.mgmt.neotechsolutions.org
+    #       repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
+    #       infrastructure-repo: ${{ steps.publish_infra.output.remoteUrl | slice(-4) }}
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        #catalogInfoPath: "/catalog-info.yaml"
+        optional: false
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl | slice(-4) }}
+      - title: Infrastructure Repository
+        url: ${{ steps.publish_infra.output.remoteUrl | slice(-4) }}
+      - title: Development link
+        url: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
+      - title: Staging link
+        url: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+      - title: Production link
+        url: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}
