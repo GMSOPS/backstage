@@ -64,18 +64,19 @@ spec:
             allowedKind:
               - Users
               - Groups
-    # - title: Choose a location
-    #   required:
-    #     - repoUrl
-    #   properties:
-    #     repoUrl:
-    #       title: Repository Location
-    #       type: string
-    #       ui:field: RepoUrlPicker
-    #       ui:options:
-    #         allowedHosts:
-    #           - github.com
+    - title: Choose a location
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository Location
+          type: string
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
   steps:
+
     - id: template
       name: Fetch Skeleton + Infra Template
       action: fetch:template
@@ -86,10 +87,14 @@ spec:
           project: ${{ parameters.project }}
           port: ${{ parameters.port }}
           registry: ${{ parameters.registry }}
-          repoUrl: https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
+          repoUrl: ${{ parameters.repoUrl }} #https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
           developmentApiServerUrl: ${{ parameters.developmentApiServerUrl }} # https://w4rpzvhgnt.kubermatic.mgmt.neotechsolutions.org:31886
           stagingApiServerUrl: ${{ parameters.stagingApiServerUrl }} # https://staging-apiserver.com:6443
           productionApiServerUrl: ${{ parameters.productionApiServerUrl }} # https://production-apiserver.com:6443
+    - name: Results
+      action: debug:log
+      input:
+        listWorkspace: true
     - id: publish
       name: Publish
       action: publish:github
