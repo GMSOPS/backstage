@@ -168,6 +168,8 @@ spec:
     #       project: ${{ parameters.project }}
     #       infrastructure-repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
 
+    # PR na mgmt-infra
+
     - id: register
       name: Register
       action: catalog:register
