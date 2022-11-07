@@ -213,6 +213,11 @@ spec:
 
     # End S3
 
+    # Workflow (Pipeline)
+
+
+    # End Workflow
+
     - id: open-pr
       name: "Open PR in GitOps Repository for the app crossplane"
       action: publish:github:pull-request
@@ -224,6 +229,7 @@ spec:
           ${{ parameters.description if parameters.description }}
         sourcePath: cp-app
         targetPath: ./
+        
 
     # DNS
     - action: http:backstage:request
