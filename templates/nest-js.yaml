@@ -124,6 +124,8 @@ spec:
           hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
           hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
           hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+          s3: ${{ parameters.s3 }}
+          rds: ${{ parameters.rds }}
 
     # RDS
 
