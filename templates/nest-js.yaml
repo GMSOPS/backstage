@@ -61,6 +61,18 @@ spec:
           title: Automatically add dns records
           type: boolean
           default: true
+        rds:
+          title: Add RDS database
+          type: boolean
+          default: true
+        s3:
+          title: Add S3 Bucket
+          type: boolean
+          default: true
+        pipeline:
+          title: Automatically add CI/CD pipeline (Argo Workflows)
+          type: boolean
+          default: true
         description:
           title: Description
           type: string
@@ -113,6 +125,92 @@ spec:
           hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
           hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
 
+    # RDS
+
+    - id: fetch_rds_dev
+      if: ${{ parameters.rds }}
+      name: Fetch AWS RDS Templates (Development)
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/rds
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          environment: development
+          region: eu-west-1
+
+    - id: fetch_rds_stg
+      if: ${{ parameters.rds }}
+      name: Fetch AWS RDS Templates (Staging)
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/rds
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          environment: staging
+          region: eu-west-1
+
+    - id: fetch_rds_prod
+      if: ${{ parameters.rds }}
+      name: Fetch AWS RDS Templates (Production)
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/rds
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          environment: production
+          region: eu-west-2
+  
+    # End RDS
+
+    # S3
+
+    - id: fetch_s3_dev
+      if: ${{ parameters.s3 }}
+      name: Fetch AWS S3 Templates (Development)
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/s3
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          environment: development
+          region: eu-west-1
+
+    - id: fetch_s3_stg
+      if: ${{ parameters.s3 }}
+      name: Fetch AWS S3 Templates (Staging)
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/s3
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          environment: staging
+          region: eu-west-1
+
+    - id: fetch_s3_prod
+      if: ${{ parameters.s3 }}
+      name: Fetch AWS S3 Templates (Production)
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/s3
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          environment: production
+          region: eu-west-2
+
+    # End S3
+
     - id: open-pr
       name: "Open PR in GitOps Repository for the app crossplane"
       action: publish:github:pull-request
@@ -125,10 +223,11 @@ spec:
         sourcePath: cp-app
         targetPath: ./
 
+    # DNS
     - action: http:backstage:request
-      id: add_dns_records
+      id: add_dns_records_dev
       if: ${{ parameters.autoDns }}
-      name: Create DNS record
+      name: Create DNS record (Development)
       input:
         method: POST
         path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
@@ -139,6 +238,38 @@ spec:
           name: ${{ parameters.app }}-${{ parameters.project }}.dev
           content: "10.0.0.1"
           ttl: 1
+
+    - action: http:backstage:request
+      id: add_dns_records_stg
+      if: ${{ parameters.autoDns }}
+      name: Create DNS record (Staging)
+      input:
+        method: POST
+        path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
+        headers:
+            'content-type': 'application/json'
+        body:
+          type: A
+          name: ${{ parameters.app }}-${{ parameters.project }}.stg
+          content: "10.0.0.2"
+          ttl: 1
+
+    - action: http:backstage:request
+      id: add_dns_records_prod
+      if: ${{ parameters.autoDns }}
+      name: Create DNS record (Production)
+      input:
+        method: POST
+        path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
+        headers:
+            'content-type': 'application/json'
+        body:
+          type: A
+          name: ${{ parameters.app }}-${{ parameters.project }}
+          content: "10.0.0.3"
+          ttl: 1
+
+    # End DNS
 
     - action: http:backstage:request
       id: run-workflow
