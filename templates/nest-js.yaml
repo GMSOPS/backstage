@@ -214,8 +214,19 @@ spec:
     # End S3
 
     # Workflow (Pipeline)
-
-
+    - id: fetch_workflow
+      if: ${{ parameters.pipeline }}
+      name: Fetch Argo Workflow Pipeline template
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/backend-workflow
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          stack: NestJS
+          registry: ${{ parameters.registry }}
+          gitOwner: ${{ parameters.gitOwner }}
     # End Workflow
 
     - id: open-pr

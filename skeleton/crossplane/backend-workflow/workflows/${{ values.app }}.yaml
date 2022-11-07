@@ -1,0 +1,13 @@
+apiVersion: helm.gmsops.io/v1beta1
+kind: BackendWorkflow
+metadata:
+  namespace: argo-workflows
+  name: ${{ values.app }}
+spec:
+  parameters:
+    project: ${{ values.project }}
+    app: ${{ values.app }}
+    stack: ${{ values.stack }}
+    registry: ${{ values.registry }}
+    gitOwner: ${{ values.gitOwner }}
+
