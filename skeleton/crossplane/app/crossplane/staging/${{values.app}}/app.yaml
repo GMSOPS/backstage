@@ -12,9 +12,5 @@ spec:
     tag: v0.0.1
     port: "${{values.port}}"
     hostname: ${{values.hostStaging}}
-    ${% if not values.s3 %}
-    s3: false
-    ${% endif %}
-    ${% if not values.rds %}
-    rds: false
-    ${% endif %}
+    ${{ "s3: false" if values.s3 == false }}
+    ${{ "rds: false" if values.rds == false }}
