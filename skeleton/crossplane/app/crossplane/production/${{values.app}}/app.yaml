@@ -12,5 +12,5 @@ spec:
     tag: v0.0.1
     port: "${{values.port}}"
     hostname: ${{values.hostProduction}}
-    ${{ "s3: false" if values.s3 == false -}}
-    ${{ "rds: false" if values.rds == false -}}
+    ${{ "s3: false" if values.s3 == false }}
+    ${{ "rds: false" if values.rds == false }}
