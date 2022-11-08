@@ -158,17 +158,20 @@ spec:
 
     # THIS WILL BE ARGO PROJECT & APP WORKFLOW APPLY STEP
 
-    # - action: http:backstage:request
-    #   id: run-workflow
-    #   name: Run bootstrap workflow
-    #   input:
-    #     method: POST
-    #     path: "/api/proxy/workflow/webhook/project-bootstrap"
-    #     body:
-    #       project: ${{ parameters.project }}
-    #       infrastructure-repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
+    - action: http:backstage:request
+      id: run-workflow
+      name: Run bootstrap workflow
+      input:
+        method: POST
+        path: "/api/proxy/workflow/webhook/project-bootstrap"
+        headers:
+            'content-type': 'application/json'
+        body:
+          app: ${{ parameters.project }}
+          repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
+          path: ./argocd
+          regex: .*\.yaml$
 
-    # PR na mgmt-infra
 
     - id: register
       name: Register
