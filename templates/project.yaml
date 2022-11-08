@@ -168,7 +168,7 @@ spec:
             'content-type': 'application/json'
         body:
           app: ${{ parameters.project }}
-          repo: ${{ steps.publish.output.remoteUrl | slice(-4) }}
+          repo: https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
           path: ./argocd
           regex: .*\.yaml$
 
