@@ -243,20 +243,20 @@ spec:
         
 
     # DNS
-    - action: http:backstage:request
-      id: add_dns_records_dev
-      if: ${{ parameters.autoDns }}
-      name: Create DNS record (Development)
-      input:
-        method: POST
-        path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
-        headers:
-            'content-type': 'application/json'
-        body:
-          type: A
-          name: ${{ parameters.app }}-${{ parameters.project }}.dev
-          content: "10.0.0.1"
-          ttl: 1
+    # - action: http:backstage:request
+    #   id: add_dns_records_dev
+    #   if: ${{ parameters.autoDns }}
+    #   name: Create DNS record (Development)
+    #   input:
+    #     method: POST
+    #     path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
+    #     headers:
+    #         'content-type': 'application/json'
+    #     body:
+    #       type: A
+    #       name: ${{ parameters.app }}-${{ parameters.project }}-dev
+    #       content: "78.47.148.70"
+    #       ttl: 1
 
     - action: http:backstage:request
       id: add_dns_records_stg
@@ -269,8 +269,8 @@ spec:
             'content-type': 'application/json'
         body:
           type: A
-          name: ${{ parameters.app }}-${{ parameters.project }}.stg
-          content: "10.0.0.2"
+          name: ${{ parameters.app }}-${{ parameters.project }}-stg
+          content: "167.235.204.32"
           ttl: 1
 
     - action: http:backstage:request
@@ -285,7 +285,7 @@ spec:
         body:
           type: A
           name: ${{ parameters.app }}-${{ parameters.project }}
-          content: "10.0.0.3"
+          content: "168.119.153.199"
           ttl: 1
 
     # End DNS

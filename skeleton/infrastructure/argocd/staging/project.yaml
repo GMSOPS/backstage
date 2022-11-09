@@ -1,19 +1,19 @@
-# apiVersion: argoproj.io/v1alpha1
-# kind: AppProject
-# metadata:
-#   finalizers:
-#   - resources-finalizer.argocd.argoproj.io
-#   name: ${{values.project}}-staging
-#   namespace: argo-cd
-# spec:
-#   clusterResourceWhitelist:
-#   - group: '*'
-#     kind: '*'
-#   destinations:
-#   - namespace: '*'
-#     server: '*'
-#   namespaceResourceWhitelist:
-#   - group: '*'
-#     kind: '*'
-#   sourceRepos:
-#   - '*'
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: ${{values.project}}-staging
+  namespace: argo-cd
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  - namespace: '*'
+    server: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
