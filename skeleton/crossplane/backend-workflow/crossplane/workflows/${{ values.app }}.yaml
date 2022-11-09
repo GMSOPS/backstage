@@ -1,7 +1,6 @@
 apiVersion: helm.gmsops.io/v1beta1
-kind: BackendWorkflow
+kind: XBackendWorkflow
 metadata:
-  namespace: argo-workflows
   name: ${{ values.app }}
 spec:
   parameters:

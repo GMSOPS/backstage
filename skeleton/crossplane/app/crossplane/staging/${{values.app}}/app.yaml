@@ -1,7 +1,6 @@
 apiVersion: helm.gmsops.io/v1beta1
-kind: App
+kind: XApp
 metadata:
-  namespace: ${{values.app}}
   name: ${{values.app}}
 spec:
   compositionRef:
