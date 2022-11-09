@@ -116,12 +116,12 @@ spec:
           port: ${{ parameters.port }}
           registry: harbor.mgmt.neotechsolutions.org
           repoUrl: ${{ steps.publish.output.remoteUrl | slice(-4) }}-infrastructure
-          hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
-          hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+          hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}-dev.${{ parameters.domain }}
+          hostStaging: ${{ parameters.app }}-${{ parameters.project }}-stg.${{ parameters.domain }}
           hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
-          developmentApiServerUrl: https://w4rpzvhgnt.kubermatic.mgmt.neotechsolutions.org:31886
-          stagingApiServerUrl: https://staging-apiserver.com:6443
-          productionApiServerUrl: https://production-apiserver.com:6443
+          developmentApiServerUrl: https://dev-apiserver.com:6443
+          stagingApiServerUrl: https://gddfb47dgd.kubermatic.mgmt.neotechsolutions.org:31075
+          productionApiServerUrl: https://w4rpzvhgnt.kubermatic.mgmt.neotechsolutions.org:31886
     - id: publish_infra
       name: Publish
       action: publish:github
