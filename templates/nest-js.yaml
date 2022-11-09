@@ -224,7 +224,7 @@ spec:
         values:
           project: ${{ parameters.project }}
           app: ${{ parameters.app }}
-          stack: NestJS
+          stack: nestjs
           registry: ${{ parameters.registry }}
           gitOwner: ${{ parameters.gitOwner }}
     # End Workflow
