@@ -1,0 +1,52 @@
+argo-apps:
+  spec:
+    destination:
+      server: ${{values.stagingApiServerUrl}}
+    project: ${{values.project}}-staging
+    suffix: staging
+
+  apps:
+    nginx-ingress-controller:
+      ns: nginx-ingress-controller
+      source:
+        url: https://github.com/GMSOPS/helms-devops # *.project.dev.gms-ops.net  -> *.
+        branch: main
+      path: ./nginx-ingress-controller
+      value: values-${{values.project}}-staging
+      autoSync: true
+    argo-rollouts:
+      ns: argo-rollouts
+      source:
+        url: https://github.com/GMSOPS/helms-devops
+        branch: main
+      path: ./argo-rollouts
+      value: values-${{values.project}}-staging
+      autoSync: true
+    reloader:
+      ns: default
+      source:
+        url: https://github.com/GMSOPS/helms-devops
+        branch: main
+      path: ./reloader
+      value: values
+    crossplane:
+      ns: crossplane-system
+      source:
+        url: https://github.com/GMSOPS/helms-devops
+        branch: main
+      path: ./crossplane-user
+      value: values
+    external-secrets:
+      ns: external-secrets
+      source:
+        url: https://github.com/GMSOPS/helms-devops
+        branch: main
+      path: ./external-secrets
+      value: values
+    k8s-tools:
+      ns: default
+      source:
+        url: https://github.com/GMSOPS/helms-devops
+        branch: main
+      path: ./k8s-tools
+      value: values  

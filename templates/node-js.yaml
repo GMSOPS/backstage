@@ -36,16 +36,17 @@ spec:
           title: Port
           type: number
           description: The port app listens on
+        subdomain:
+          title: App subdomain
+          type: string
+          description: <subdomain>.<domain> 
         domain:
           title: App domain name
           type: string
           description: Unique name of the project
           enum:
             - gms-ops.net
-        autoDns:
-          title: Automatically add dns records
-          type: boolean
-          default: true
+            - yourcoaching.io
         description:
           title: Description
           type: string
@@ -108,7 +109,7 @@ spec:
       name: Fetch Skeleton + Infra Template
       action: fetch:template
       input:
-        url: ../skeleton/infrastructure
+        url: ../skeleton/infrastructure # 
         targetPath: ./infra
         values:
           project: ${{ parameters.project }}
@@ -118,7 +119,11 @@ spec:
           repoUrl: ${{ steps.publish.output.remoteUrl | slice(-4) }}-infrastructure
           hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}-dev.${{ parameters.domain }}
           hostStaging: ${{ parameters.app }}-${{ parameters.project }}-stg.${{ parameters.domain }}
-          hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+          # hostDevelopment: ${{ parameters.subdomain }}-dev.${{ parameters.domain }} # *.dev.yourcoaching.io && dev.yourcoaching.io
+          # hostStaging: ${{ parameters.subdomain }}-stg.${{ parameters.domain }} # *.stg.yourcoaching.io && stg.yourcoaching.io
+          hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }} 
+          # hostProduction: ${{ parameters.subdomain }}.${{ parameters.domain }} *.yourcoaching.io && yourcoaching.io
+          # hostProduction: ${{ parameters.hostProduction }} -- 
           developmentApiServerUrl: https://dev-apiserver.com:6443
           stagingApiServerUrl: https://gddfb47dgd.kubermatic.mgmt.neotechsolutions.org:31075
           productionApiServerUrl: https://w4rpzvhgnt.kubermatic.mgmt.neotechsolutions.org:31886
@@ -132,21 +137,6 @@ spec:
         description: This is ${{ parameters.app }}-infrastructure
         repoUrl: ${{ parameters.repoUrl }}-infrastructure
         defaultBranch: main
-
-    - action: http:backstage:request
-      id: add_dns_records
-      if: ${{ parameters.autoDns == true }}
-      name: Create DNS record
-      input:
-        method: POST
-        path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
-        headers:
-            'content-type': 'application/json'
-        body:
-          type: A
-          name: ${{ parameters.app }}-${{ parameters.project }}.dev
-          content: "10.0.0.1"
-          ttl: 1
 
     - action: http:backstage:request
       id: run-workflow

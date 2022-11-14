@@ -23,6 +23,7 @@ spec:
         - domain
         - gitOwner
         - registry
+        - subdomain
       properties:
         gitOwner:
           title: Github User/Organization
@@ -57,10 +58,15 @@ spec:
           description: Unique name of the project
           enum:
             - gms-ops.net
-        autoDns:
-          title: Automatically add dns records
-          type: boolean
-          default: true
+            - yourcoaching.io
+        subdomain:
+          title: App subdomain
+          type: string
+          description: <subdomain>-<env>.<domain> for dev and staging,<subdomain>.<domain> for production
+        # autoDns:
+        #   title: Automatically add dns records
+        #   type: boolean
+        #   default: true
         rds:
           title: Add RDS database
           type: boolean
@@ -121,9 +127,9 @@ spec:
           app: ${{ parameters.app }}
           port: ${{ parameters.port }}
           registry: ${{ parameters.registry }}
-          hostDevelopment: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
-          hostStaging: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
-          hostProduction: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+          hostDevelopment: ${{ parameters.subdomain }}-dev.${{ parameters.domain }}
+          hostStaging: ${{ parameters.subdomain }}-stg.${{ parameters.domain }}
+          hostProduction: ${{ parameters.subdomain }}.${{ parameters.domain }}
           s3: ${{ parameters.s3 }}
           rds: ${{ parameters.rds }}
 
@@ -258,35 +264,35 @@ spec:
     #       content: "78.47.148.70"
     #       ttl: 1
 
-    - action: http:backstage:request
-      id: add_dns_records_stg
-      if: ${{ parameters.autoDns }}
-      name: Create DNS record (Staging)
-      input:
-        method: POST
-        path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
-        headers:
-            'content-type': 'application/json'
-        body:
-          type: A
-          name: ${{ parameters.app }}-${{ parameters.project }}-stg
-          content: "167.235.204.32"
-          ttl: 1
+    # - action: http:backstage:request
+    #   id: add_dns_records_stg
+    #   if: ${{ parameters.autoDns }}
+    #   name: Create DNS record (Staging)
+    #   input:
+    #     method: POST
+    #     path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
+    #     headers:
+    #         'content-type': 'application/json'
+    #     body:
+    #       type: A
+    #       name: ${{ parameters.app }}-${{ parameters.project }}-stg
+    #       content: "167.235.204.32"
+    #       ttl: 1
 
-    - action: http:backstage:request
-      id: add_dns_records_prod
-      if: ${{ parameters.autoDns }}
-      name: Create DNS record (Production)
-      input:
-        method: POST
-        path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
-        headers:
-            'content-type': 'application/json'
-        body:
-          type: A
-          name: ${{ parameters.app }}-${{ parameters.project }}
-          content: "168.119.153.199"
-          ttl: 1
+    # - action: http:backstage:request
+    #   id: add_dns_records_prod
+    #   if: ${{ parameters.autoDns }}
+    #   name: Create DNS record (Production)
+    #   input:
+    #     method: POST
+    #     path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
+    #     headers:
+    #         'content-type': 'application/json'
+    #     body:
+    #       type: A
+    #       name: ${{ parameters.app }}-${{ parameters.project }}
+    #       content: "168.119.153.199"
+    #       ttl: 1
 
     # End DNS
 
@@ -319,11 +325,11 @@ spec:
       - title: Infrastructure Repository
         url: https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
       - title: Development link
-        url: https://${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
+        url: https://${{ parameters.subdomain }}-dev.${{ parameters.domain }}
       - title: Staging link
-        url: https://${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+        url: https://${{ parameters.subdomain }}-stg.${{ parameters.domain }}
       - title: Production link
-        url: https://${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+        url: https://${{ parameters.subdomain }}.${{ parameters.domain }}
       - title: Open in catalog
         icon: catalog
         entityRef: ${{ steps.register.output.entityRef }}

@@ -1,7 +1,6 @@
 apiVersion: storage.gmsops.io/v1alpha1
 kind: XDatabase
 metadata:
-  namespace: ${{values.app}}
   name: ${{values.app}}
 spec:
   compositionRef:
