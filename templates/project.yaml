@@ -37,6 +37,7 @@ spec:
           description: Unique name of the project
           enum:
             - demo
+            - yourcoaching
         registry:
           title: Registry
           type: string
@@ -170,7 +171,7 @@ spec:
           app: ${{ parameters.project }}
           repo: https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
           path: ./argocd
-          regex: .*\.yaml$
+          regex: '.*(common|root|project)\.yaml$'
 
 
     - id: register
@@ -187,12 +188,12 @@ spec:
         url: ${{ steps.publish.output.remoteUrl | slice(-4) }}
       - title: Infrastructure Repository
         url: ${{ steps.publish_infra.output.remoteUrl | slice(-4) }}
-      - title: Development link
-        url: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
-      - title: Staging link
-        url: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
-      - title: Production link
-        url: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
+      # - title: Development link
+      #   url: ${{ parameters.app }}-${{ parameters.project }}.dev.${{ parameters.domain }}
+      # - title: Staging link
+      #   url: ${{ parameters.app }}-${{ parameters.project }}.stg.${{ parameters.domain }}
+      # - title: Production link
+      #   url: ${{ parameters.app }}-${{ parameters.project }}.${{ parameters.domain }}
       - title: Open in catalog
         icon: catalog
         entityRef: ${{ steps.register.output.entityRef }}
