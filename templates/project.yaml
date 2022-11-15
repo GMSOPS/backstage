@@ -184,8 +184,6 @@ spec:
 
   output:
     links:
-      - title: Repository
-        url: ${{ steps.publish.output.remoteUrl | slice(-4) }}
       - title: Infrastructure Repository
         url: ${{ steps.publish_infra.output.remoteUrl | slice(-4) }}
       # - title: Development link
