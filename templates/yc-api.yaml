@@ -1,0 +1,294 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: yc-api-template
+  title: YourCoaching API
+  description: Add YourCoaching API
+
+  tags:
+    - dotnet
+    - dotnet core
+    - c#
+    - service
+    - component
+spec:
+  owner: group:sre-team
+  type: component
+  parameters:
+    - title: Provide some simple information
+      required:
+        - owner
+        - app
+        - port
+        - domain
+        - gitOwner
+        - registry
+        - subdomain
+      properties:
+        gitOwner:
+          title: Github User/Organization
+          type: string
+          description: Github username or organization name
+          enum:
+            - NTS-idP
+        project:
+          title: Project Name
+          type: string
+          description: Unique name of the project
+          enum:
+            - yourcoaching
+        app:
+          title: Application Name
+          type: string
+          description: Unique name of the application
+          ui:field: EntityNamePicker
+        registry:
+          title: Registry
+          type: string
+          description: Hostname of the image registry
+          enum:
+            - harbor.mgmt.neotechsolutions.org
+        port:
+          title: Port
+          type: number
+          description: The port app listens on
+        domain:
+          title: App domain name
+          type: string
+          description: Unique name of the project
+          enum:
+            - yourcoaching.io
+        subdomain:
+          title: App subdomain
+          type: string
+          description: <subdomain>-<env>.<domain> for dev and staging,<subdomain>.<domain> for production
+        path:
+          title: App url path
+          type: string
+          description: <subdomain>-<env>.<domain>/path for dev and staging,<subdomain>.<domain>/path for production
+        # autoDns:
+        #   title: Automatically add dns records
+        #   type: boolean
+        #   default: true
+        s3:
+          title: Add S3 Bucket
+          type: boolean
+          default: true
+        pipeline:
+          title: Automatically add CI/CD pipeline (Argo Workflows)
+          type: boolean
+          default: true
+        description:
+          title: Description
+          type: string
+          description: Help others understand what this website is for.
+        owner:
+          title: Owner
+          type: string
+          description: Owner of the component
+          ui:field: OwnerPicker
+          ui:options:
+            allowedKind:
+              - Users
+              - Groups
+  steps:
+    # - id: template
+    #   name: Fetch Skeleton + Template
+    #   action: fetch:template
+    #   input:
+    #     url: ../skeleton/nest-app
+    #     targetPath: ./app
+    #     values:
+    #       app: ${{ parameters.app }}
+    #       port: ${{ parameters.port }}
+    #       registry: ${{ parameters.registry }}
+
+    # - id: publish
+    #   name: Publish
+    #   action: publish:github
+    #   input:
+    #     allowedHosts:
+    #       - github.com
+    #     sourcePath: ./app
+    #     description: This is ${{ parameters.app }}
+    #     repoUrl: github.com?owner=${{ parameters.gitOwner }}&repo=${{ parameters.app }}
+    #     defaultBranch: main
+
+
+    - id: fetch_template_app
+      name: Fetch Application Crossplane Templates
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/app
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          port: ${{ parameters.port }}
+          registry: ${{ parameters.registry }}
+          hostDevelopment: ${{ parameters.subdomain }}-dev.${{ parameters.domain }}
+          hostStaging: ${{ parameters.subdomain }}-stg.${{ parameters.domain }}
+          hostProduction: ${{ parameters.subdomain }}.${{ parameters.domain }}
+          s3: ${{ parameters.s3 }}
+          rds: ${{ parameters.rds }}
+          path: ${{ parameters.path }}
+          
+
+
+    # S3
+
+    - id: fetch_s3_dev
+      if: ${{ parameters.s3 }}
+      name: Fetch AWS S3 Templates (Development)
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/s3
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          environment: development
+          region: eu-west-1
+
+    - id: fetch_s3_stg
+      if: ${{ parameters.s3 }}
+      name: Fetch AWS S3 Templates (Staging)
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/s3
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          environment: staging
+          region: eu-west-1
+
+    - id: fetch_s3_prod
+      if: ${{ parameters.s3 }}
+      name: Fetch AWS S3 Templates (Production)
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/s3
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          environment: production
+          region: eu-west-2
+
+    # End S3
+
+    # Workflow (Pipeline)
+    - id: fetch_workflow
+      if: ${{ parameters.pipeline }}
+      name: Fetch Argo Workflow Pipeline template
+      action: fetch:template
+      input:
+        targetPath: ./cp-app
+        url: ../skeleton/crossplane/backend-workflow
+        values:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          stack: nestjs
+          registry: ${{ parameters.registry }}
+          gitOwner: ${{ parameters.gitOwner }}
+    # End Workflow
+
+    - id: open-pr
+      name: "Open PR in GitOps Repository for the app crossplane"
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?repo=${{ parameters.project }}-infrastructure&owner=${{ parameters.gitOwner }}
+        branchName: feat/create-${{ parameters.project }}-${{ parameters.app }}-${{ parameters.environment }}
+        title: ':robot: [backstage-bot] Create ${{ parameters.project }} ${{ parameters.app }} ${{ parameters.environment }} application'
+        description: |
+          ${{ parameters.description if parameters.description }}
+        sourcePath: cp-app
+        targetPath: ./
+        
+
+    # DNS
+    # - action: http:backstage:request
+    #   id: add_dns_records_dev
+    #   if: ${{ parameters.autoDns }}
+    #   name: Create DNS record (Development)
+    #   input:
+    #     method: POST
+    #     path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
+    #     headers:
+    #         'content-type': 'application/json'
+    #     body:
+    #       type: A
+    #       name: ${{ parameters.app }}-${{ parameters.project }}-dev
+    #       content: "78.47.148.70"
+    #       ttl: 1
+
+    # - action: http:backstage:request
+    #   id: add_dns_records_stg
+    #   if: ${{ parameters.autoDns }}
+    #   name: Create DNS record (Staging)
+    #   input:
+    #     method: POST
+    #     path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
+    #     headers:
+    #         'content-type': 'application/json'
+    #     body:
+    #       type: A
+    #       name: ${{ parameters.app }}-${{ parameters.project }}-stg
+    #       content: "167.235.204.32"
+    #       ttl: 1
+
+    # - action: http:backstage:request
+    #   id: add_dns_records_prod
+    #   if: ${{ parameters.autoDns }}
+    #   name: Create DNS record (Production)
+    #   input:
+    #     method: POST
+    #     path: /api/proxy/cloudflare/api/zones/1aeb1365d8a34e09be23964e9db07535/dns_records
+    #     headers:
+    #         'content-type': 'application/json'
+    #     body:
+    #       type: A
+    #       name: ${{ parameters.app }}-${{ parameters.project }}
+    #       content: "168.119.153.199"
+    #       ttl: 1
+
+    # End DNS
+
+    - action: http:backstage:request
+      id: run-workflow
+      name: Run bootstrap workflow
+      input:
+        method: POST
+        path: "/api/proxy/workflow/webhook/app-bootstrap"
+        headers:
+            'content-type': 'application/json'
+        body:
+          project: ${{ parameters.project }}
+          app: ${{ parameters.app }}
+          registry: ${{ parameters.registry }}
+          repo: https://github.com/${{ parameters.gitOwner }}/${{ parameters.app }}
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: https://github.com/${{ parameters.gitOwner }}/${{ parameters.app }}/blob/main/catalog-info.yaml
+        #catalogInfoPath: "/catalog-info.yaml"
+        optional: false
+
+  output:
+    links:
+      - title: Repository
+        url: https://github.com/${{ parameters.gitOwner }}/${{ parameters.app }} # NTS-idP , your-coaching-api
+      - title: Infrastructure Repository
+        url: https://github.com/${{ parameters.gitOwner }}/${{ parameters.project }}-infrastructure
+      - title: Development link
+        url: https://${{ parameters.subdomain }}-dev.${{ parameters.domain }}
+      - title: Staging link
+        url: https://${{ parameters.subdomain }}-stg.${{ parameters.domain }}
+      - title: Production link
+        url: https://${{ parameters.subdomain }}.${{ parameters.domain }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

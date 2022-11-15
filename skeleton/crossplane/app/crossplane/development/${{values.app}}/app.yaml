@@ -13,3 +13,4 @@ spec:
     hostname: ${{values.hostDevelopment}}
     ${{ "s3: false" if values.s3 == false }}
     ${{ "rds: false" if values.rds == false }}
+    ${{ "path: values.path" if values.path and values.path !== "/" }}
