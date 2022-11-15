@@ -20,7 +20,7 @@ argo-apps:
         url: https://github.com/GMSOPS/helms-devops
         branch: main
       path: ./argo-rollouts
-      value: values-${{values.project}}-staging
+      value: values
       autoSync: true
     reloader:
       ns: default
