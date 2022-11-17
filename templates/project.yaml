@@ -37,7 +37,7 @@ spec:
           description: Unique name of the project
           enum:
             - demo
-            - yourcoaching
+            - your-coaching
         registry:
           title: Registry
           type: string
